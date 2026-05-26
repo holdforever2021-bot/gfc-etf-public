@@ -483,6 +483,9 @@ footer a{color:#a78bfa;text-decoration:none}
   /* Hide less essential columns on positions table */
   table.pos-table th:nth-child(3),table.pos-table td:nth-child(3),
   table.pos-table th:nth-child(5),table.pos-table td:nth-child(5){display:none}
+  /* Hide on alpha table */
+  table.alpha-table th:nth-child(7),table.alpha-table td:nth-child(7),
+  table.alpha-table th:nth-child(8),table.alpha-table td:nth-child(8){display:none}
   /* Hide on txn table */
   table.txn-table th:nth-child(4),table.txn-table td:nth-child(4),
   table.txn-table th:nth-child(5),table.txn-table td:nth-child(5){display:none}
@@ -632,7 +635,7 @@ footer a{color:#a78bfa;text-decoration:none}
     <div class="card-title">Alpha Layer — Agent Active</div>
     <div class="card-sub">Options · Spreads · Hedges · Full agent discretion</div>
   </div>
-  <table>
+  <div class="table-scroll"><table class="alpha-table">
     <thead><tr><th>Ticker</th><th>Structure</th><th>Cost</th><th>MTM</th><th>P&L</th><th>P&L %</th><th>Max Profit</th><th>Exit Rule</th><th>Status</th></tr></thead>
     <tbody>
     {% for p in alpha_pos %}
@@ -652,7 +655,7 @@ footer a{color:#a78bfa;text-decoration:none}
     </tr>
     {% endfor %}
     </tbody>
-  </table>
+  </table></div>
 </div>
 {% endif %}
 
