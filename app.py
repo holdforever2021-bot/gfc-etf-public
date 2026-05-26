@@ -644,7 +644,7 @@ footer a{color:#a78bfa;text-decoration:none}
     {% set pct=p.get('pnl_pct',0) %}
     <tr>
       <td><strong>{{p.ticker}}</strong></td>
-      <td><span class="chip chip-blue">{{p.get('asset_type','SPREAD')}}</span></td>
+      <td><span class="chip chip-blue" style="font-size:11px">{{p.get('strike_display', p.get('asset_type','SPREAD'))}}</span></td>
       <td>${{'%.2f'|format(p.get('cost',0))}}</td>
       <td>${{'%.2f'|format(mtm)}}</td>
       <td class="{{'pos' if pnl>=0 else 'neg'}}">${{'%+.2f'|format(pnl)}}</td>
