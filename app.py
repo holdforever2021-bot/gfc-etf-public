@@ -633,24 +633,29 @@ footer a{color:#a78bfa;text-decoration:none}
     <div class="card-sub">Options · Spreads · Hedges · Full agent discretion</div>
   </div>
   <div class="table-scroll"><table class="alpha-table">
-    <thead><tr><th>Ticker</th><th>Structure</th><th>Cost</th><th>MTM</th><th>P&L</th><th>P&L %</th><th>Max Profit</th><th>Exit Rule</th><th>Status</th></tr></thead>
+    <thead><tr><th>Ticker</th><th>Qty</th><th>Avg Cost</th><th>Current</th><th>Mkt Value</th><th>P&L</th><th>P&L %</th></tr></thead>
     <tbody>
+    {%- set ns_a = namespace(tc=0,tv=0,tp=0) %}
     {% for p in alpha_pos %}
-    {% set mtm=p.get('mtm',p.get('cost',0)) %}
-    {% set pnl=p.get('pnl',0) %}
-    {% set pct=p.get('pnl_pct',0) %}
+    {%- set mtm=p.get('mtm',p.get('cost',0)) %}{%- set pnl=p.get('pnl',0) %}{%- set pct=p.get('pnl_pct',0) %}
+    {%- set ns_a.tc=ns_a.tc+p.get('cost',0) %}{%- set ns_a.tv=ns_a.tv+mtm %}{%- set ns_a.tp=ns_a.tp+pnl %}
     <tr>
       <td><strong>{{p.ticker}}</strong></td>
-      <td><span class="chip chip-blue" style="font-size:11px">{{p.get('strike_display', p.get('asset_type','SPREAD'))}}</span></td>
-      <td>${{'%.2f'|format(p.get('cost',0))}}</td>
+      <td style="color:var(--mt)">1</td>
+      <td style="color:var(--mt)">${{'%.2f'|format(p.get('cost',0))}}</td>
+      <td>${{'%.2f'|format(mtm)}}</td>
       <td>${{'%.2f'|format(mtm)}}</td>
       <td class="{{'pos' if pnl>=0 else 'neg'}}">${{'%+.2f'|format(pnl)}}</td>
       <td class="{{'pos' if pct>=0 else 'neg'}}">{{'%+.1f'|format(pct)}}%</td>
-      <td style="color:var(--mt)">${{'%.2f'|format(p.get('max_profit',0)) if p.get('max_profit') else 'Uncapped'}}</td>
-      <td><span class="chip chip-purple">{{p.get('stop_type','Thesis only')}}</span></td>
-      <td><span class="chip chip-green">FILLED</span></td>
     </tr>
     {% endfor %}
+    <tr class="totals">
+      <td>TOTAL</td><td>—</td>
+      <td style="color:var(--mt)">${{'%.2f'|format(ns_a.tc)}}</td><td>—</td>
+      <td>${{'%.2f'|format(ns_a.tv)}}</td>
+      <td class="{{'pos' if ns_a.tp>=0 else 'neg'}}">${{'%+.2f'|format(ns_a.tp)}}</td>
+      <td class="{{'pos' if ns_a.tp>=0 else 'neg'}}">{{'%+.2f'|format((ns_a.tp/ns_a.tc*100) if ns_a.tc else 0)}}%</td>
+    </tr>
     </tbody>
   </table></div>
 </div>
