@@ -130,7 +130,9 @@ footer strong{color:#fff}
 footer a{color:#a78bfa;text-decoration:none}
 
 /* MOBILE */
+.desktop-only{display:inline}
 @media(max-width:768px){
+  .desktop-only{display:none!important}
   nav{padding:0 20px}
   .nav-links a:not(.nav-cta){display:none}
   .hero{padding:80px 20px 40px}
@@ -463,7 +465,7 @@ tr.totals td{background:#0d1117;font-weight:700;border-top:2px solid var(--br);b
 .chip-amber{background:rgba(245,158,11,.12);color:#FCD34D;border:1px solid rgba(245,158,11,.2)}
 
 /* NOTICE */
-.notice{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:12px;color:#a78bfa;display:flex;align-items:center;gap:10px}
+.notice{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:8px;padding:10px 16px;margin-bottom:20px;font-size:12px;color:#a78bfa;text-align:center;font-weight:600;letter-spacing:.04em}
 
 /* MINI STATS ROW */
 .mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
@@ -508,7 +510,7 @@ footer a{color:#a78bfa;text-decoration:none}
     <div class="nav-logo">AMERICAN <span>FRONTIER</span> ETF &nbsp;<span style="color:#374151;font-weight:400">/ Investor Portal</span></div>
   </div>
   <div class="nav-right">
-    <span class="muted" style="color:#374151;font-size:11px">{{ now }} ET</span>
+    <span style="color:#374151;font-size:11px" class="desktop-only">{{ now }} ET</span>
     <span class="badge">{{ s.get('status','LIVE') }}</span>
     <a href="/">← Overview</a>
     <a href="/logout" style="color:var(--rd)!important">Sign out</a>
@@ -522,9 +524,7 @@ footer a{color:#a78bfa;text-decoration:none}
 {% set txns = s.get('transactions', []) %}
 {% set hist = s.get('performance_history', []) %}
 
-<div class="notice">
-  ⚡ <strong>Launched May 26, 2026</strong> — Day one. Performance materializes over the 2-5 year investment horizon. See the <a href="/#performance" style="color:#c4b5fd">backtest →</a> for historical context.
-</div>
+<div class="notice">Launched May 26, 2026</div>
 
 <!-- NAV STATS -->
 <div class="grid4">
