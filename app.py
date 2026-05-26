@@ -403,151 +403,279 @@ button:hover{background:#8B5CF6}
 # ── DASHBOARD ─────────────────────────────────────────────────────────────────
 DASHBOARD_HTML = """<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Live Portfolio — American Frontier ETF</title>
+<title>Investor Portal — American Frontier ETF</title>
 <meta http-equiv="refresh" content="120">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#F8F9FC;color:#1E293B;font-family:'Inter',system-ui,sans-serif;font-size:14px}
-.topbar{background:#fff;border-bottom:1px solid #E2E8F0;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.logo{font-size:13px;font-weight:800;color:#1E293B;letter-spacing:.04em}
-.logo span{color:#7C3AED}
-.badge-live{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0}
-.links{display:flex;gap:16px;align-items:center}
-.links a{font-size:13px;color:#94A3B8;text-decoration:none}
-.links a:hover{color:#475569}
-.page{padding:24px 28px}
-h2{color:#94A3B8;font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;font-weight:700}
+:root{--p:#7C3AED;--pl:#8B5CF6;--dk:#0A0A14;--cd:#111827;--cd2:#0d1117;--br:#1F2937;--tx:#F9FAFB;--mt:#9CA3AF;--gr:#10B981;--rd:#EF4444}
+body{background:var(--dk);color:var(--tx);font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.6;min-height:100vh}
+nav{background:rgba(10,10,20,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--br);padding:0 5%;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-logo{font-size:13px;font-weight:800;letter-spacing:.08em;color:#fff}
+.nav-logo span{color:var(--p)}
+.nav-right{display:flex;gap:16px;align-items:center}
+.nav-right a{color:var(--mt);font-size:12px;text-decoration:none;transition:color .15s}
+.nav-right a:hover{color:#fff}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(16,185,129,.12);color:var(--gr);border:1px solid rgba(16,185,129,.25)}
+
+.page{padding:28px 5%}
+
+/* STAT CARDS */
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.card{background:#fff;border-radius:10px;padding:18px;border:1px solid #E2E8F0;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.card-accent{border-left:3px solid #7C3AED}
-.sl{color:#94A3B8;font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-weight:700}
-.sv{color:#1E293B;font-size:22px;font-weight:700}.ss{color:#94A3B8;font-size:11px;margin-top:3px}
-.pos{color:#16A34A}.neg{color:#DC2626}.muted{color:#94A3B8;font-size:12px}
+.scard{background:var(--cd);border:1px solid var(--br);border-radius:12px;padding:20px 22px;transition:border-color .2s}
+.scard:first-child{border-left:3px solid var(--p)}
+.scard:hover{border-color:rgba(124,58,237,.35)}
+.sl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--mt);font-weight:700;margin-bottom:6px}
+.sv{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.ss{font-size:11px;color:#4B5563;margin-top:4px}
+.pos{color:var(--gr)}.neg{color:var(--rd)}
+
+/* SECTION CARDS */
+.card{background:var(--cd);border:1px solid var(--br);border-radius:14px;padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,.4),transparent)}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.card-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mt);font-weight:700}
+.card-sub{font-size:11px;color:#374151}
+
+/* CHART */
+.chart-container{height:280px;position:relative;margin-top:8px}
+
+/* TABLES */
 table{width:100%;border-collapse:collapse}
-th{color:#94A3B8;font-size:10px;text-transform:uppercase;text-align:left;padding:9px 14px;border-bottom:2px solid #F1F5F9;letter-spacing:.06em;font-weight:700;background:#F8FAFC}
-td{color:#1E293B;font-size:13px;padding:9px 14px;border-bottom:1px solid #F1F5F9}
-tr:hover td{background:#F8FAFC}
-tr.totals-row td{background:#F1F5F9;font-weight:700;border-top:2px solid #E2E8F0;border-bottom:none}
-.chip{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
-.filled{background:#F0FDF4;color:#16A34A}.spread{background:#EFF6FF;color:#2563EB}.long{background:#F0FDF4;color:#16A34A}
-.section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-footer{text-align:center;color:#94A3B8;font-size:11px;padding:20px;border-top:1px solid #E2E8F0;background:#fff}
-.notice{background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:#92400E}
+th{background:var(--cd2);padding:10px 16px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4B5563;text-align:left;border-bottom:1px solid var(--br)}
+td{padding:11px 16px;font-size:13px;border-bottom:1px solid rgba(31,41,55,.6);color:var(--tx)}
+tr:hover td{background:rgba(124,58,237,.05)}
+tr.totals td{background:#0d1117;font-weight:700;border-top:2px solid var(--br);border-bottom:none;color:var(--tx)}
+
+/* CHIPS */
+.chip{display:inline-block;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px}
+.chip-green{background:rgba(16,185,129,.12);color:var(--gr);border:1px solid rgba(16,185,129,.2)}
+.chip-blue{background:rgba(37,99,235,.12);color:#60A5FA;border:1px solid rgba(37,99,235,.2)}
+.chip-purple{background:rgba(124,58,237,.12);color:#a78bfa;border:1px solid rgba(124,58,237,.2)}
+.chip-amber{background:rgba(245,158,11,.12);color:#FCD34D;border:1px solid rgba(245,158,11,.2)}
+
+/* NOTICE */
+.notice{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:12px;color:#a78bfa;display:flex;align-items:center;gap:10px}
+
+/* MINI STATS ROW */
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.mstat{background:var(--cd2);border:1px solid var(--br);border-radius:10px;padding:14px 16px;text-align:center}
+.mstat-val{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.mstat-label{font-size:10px;color:var(--mt);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;font-weight:600}
+
+footer{border-top:1px solid var(--br);padding:20px 5%;text-align:center;color:#374151;font-size:11px;background:var(--cd2);margin-top:20px}
+footer a{color:#a78bfa;text-decoration:none}
+
+/* MOBILE */
+@media(max-width:768px){
+  .grid4{grid-template-columns:repeat(2,1fr)}
+  .mini-stats{grid-template-columns:repeat(2,1fr)}
+  .page{padding:20px}
+  nav{padding:0 20px}
+  th,td{padding:9px 12px;font-size:12px}
+}
+@media(max-width:480px){
+  .grid4{grid-template-columns:1fr 1fr}
+  .sv{font-size:22px}
+}
 </style></head><body>
-<div class="topbar">
+
+<nav>
   <div>
-    <div class="logo">AMERICAN <span>FRONTIER</span> ETF &nbsp;·&nbsp; <span style="color:#94A3B8;font-weight:500">Live Portfolio</span></div>
+    <div class="nav-logo">AMERICAN <span>FRONTIER</span> ETF &nbsp;<span style="color:#374151;font-weight:400">/ Investor Portal</span></div>
   </div>
-  <div class="links">
-    <span class="muted">{{ now }} ET</span>
-    <span class="badge-live">{{ s.get('status','LIVE') }}</span>
+  <div class="nav-right">
+    <span class="muted" style="color:#374151;font-size:11px">{{ now }} ET</span>
+    <span class="badge">{{ s.get('status','LIVE') }}</span>
     <a href="/">← Overview</a>
-    <a href="/logout">Sign out</a>
+    <a href="/logout" style="color:var(--rd)!important">Sign out</a>
   </div>
-</div>
+</nav>
+
 <div class="page">
 {% set perf = s.get('performance', {}) %}
 {% set positions = s.get('positions', []) %}
 {% set alpha_pos = s.get('alpha_layer', {}).get('positions', []) %}
 {% set txns = s.get('transactions', []) %}
+{% set hist = s.get('performance_history', []) %}
 
 <div class="notice">
-  ⚡ <strong>Launched May 26, 2026</strong> — This ETF launched today. Performance will materialize over the 2-5 year investment horizon. The backtest on the overview page shows the hypothetical return of these holdings from Jan 1 2026.
+  ⚡ <strong>Launched May 26, 2026</strong> — Day one. Performance materializes over the 2-5 year investment horizon. See the <a href="/#performance" style="color:#c4b5fd">backtest →</a> for historical context.
 </div>
 
+<!-- NAV STATS -->
 <div class="grid4">
-  <div class="card card-accent" style="margin:0"><div class="sl">Total NAV</div>
+  <div class="scard">
+    <div class="sl">Total NAV</div>
     <div class="sv">${{ '%.2f'|format(s.get('nav',0)) }}</div>
-    <div class="ss">Inception ${{ '%.2f'|format(perf.get('inception_nav',2000)) }}</div></div>
-  <div class="card" style="margin:0"><div class="sl">Return vs Inception</div>
+    <div class="ss">Inception ${{ '%.2f'|format(perf.get('inception_nav',2000)) }} · May 26 2026</div>
+  </div>
+  <div class="scard">
+    <div class="sl">Total Return</div>
     <div class="sv {{ 'pos' if perf.get('total_return_pct',0)>=0 else 'neg' }}">{{ '%+.2f'|format(perf.get('total_return_pct',0)) }}%</div>
-    <div class="ss">30-day review Jun 25, 2026</div></div>
-  <div class="card" style="margin:0"><div class="sl">Unrealized P&L</div>
+    <div class="ss">30-day review Jun 25, 2026</div>
+  </div>
+  <div class="scard">
+    <div class="sl">Unrealized P&L</div>
     <div class="sv {{ 'pos' if perf.get('unrealized_pnl',0)>=0 else 'neg' }}">${{ '%+.2f'|format(perf.get('unrealized_pnl',0)) }}</div>
-    <div class="ss">Realized: ${{ '%+.2f'|format(perf.get('realized_pnl',0)) }}</div></div>
-  <div class="card" style="margin:0"><div class="sl">Cash Available</div>
+    <div class="ss">Realized: ${{ '%+.2f'|format(perf.get('realized_pnl',0)) }}</div>
+  </div>
+  <div class="scard">
+    <div class="sl">Cash</div>
     <div class="sv">${{ '%.2f'|format(s.get('cash',0)) }}</div>
-    <div class="ss">Alpha capital: ${{ '%.0f'|format(s.get('initial_capital',2000)*0.20) }}</div></div>
+    <div class="ss">Alpha budget: ${{ '%.0f'|format(s.get('initial_capital',2000)*0.20) }}</div>
+  </div>
 </div>
 
-{% set hist = s.get('performance_history', []) %}
+<!-- LIVE PERFORMANCE CHART -->
 <div class="card">
-  <div class="section-hdr"><h2>Live Performance vs Benchmarks</h2><span class="muted">Agent ETF · Base ETF · QQQ · Inception May 26</span></div>
-  {% if hist|length < 2 %}<div style="text-align:center;padding:28px;color:#94A3B8;font-size:13px">Chart builds from Day 2 — first data point recorded</div>{% endif %}
-  <canvas id="liveChart" height="75"></canvas>
+  <div class="card-header">
+    <div class="card-title">Live Performance vs Benchmarks</div>
+    <div class="card-sub">Agent ETF · Base ETF · QQQ · Since inception May 26</div>
+  </div>
+  {% if hist|length < 2 %}
+  <div style="text-align:center;padding:48px 0;color:#374151;font-size:13px">
+    Performance chart builds from Day 2 — first data point recorded today
+  </div>
+  {% endif %}
+  <div class="chart-container">
+    <canvas id="liveChart"></canvas>
+  </div>
 </div>
+
 <script>
-var hist={{ hist|tojson }};if(hist&&hist.length>0){
-  new Chart(document.getElementById('liveChart'),{type:'line',
+(function(){
+  var hist = {{ hist | tojson | safe }};
+  if(!hist || hist.length < 2) return;
+  new Chart(document.getElementById('liveChart'),{
+    type:'line',
     data:{labels:hist.map(h=>h.date),datasets:[
-      {label:'Agent ETF',data:hist.map(h=>h.agent_return_pct||0),borderColor:'#7C3AED',borderWidth:2.5,pointRadius:3,tension:0.3,fill:false},
-      {label:'Base ETF',data:hist.map(h=>h.base_return_pct||0),borderColor:'#2563EB',borderWidth:2,pointRadius:3,tension:0.3,fill:false,borderDash:[5,3]},
-      {label:'QQQ',data:hist.map(h=>h.qqq_return_pct||0),borderColor:'#94A3B8',borderWidth:1.5,pointRadius:2,tension:0.3,fill:false,borderDash:[3,3]},
+      {label:'Agent ETF (+ Alpha)',data:hist.map(h=>h.agent_return_pct||0),borderColor:'#7C3AED',backgroundColor:'rgba(124,58,237,.1)',borderWidth:2.5,pointRadius:3,tension:0.4,fill:true},
+      {label:'Base ETF',data:hist.map(h=>h.base_return_pct||0),borderColor:'#2563EB',backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:0.4,fill:false,borderDash:[5,3]},
+      {label:'QQQ',data:hist.map(h=>h.qqq_return_pct||0),borderColor:'#374151',backgroundColor:'transparent',borderWidth:1.5,pointRadius:2,tension:0.4,fill:false,borderDash:[3,3]},
     ]},
-    options:{responsive:true,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{position:'top',labels:{font:{size:11},usePointStyle:true}}},
-      scales:{x:{grid:{color:'#F1F5F9'},ticks:{font:{size:11},color:'#94A3B8'}},
-        y:{grid:{color:'#F1F5F9'},ticks:{font:{size:11},color:'#94A3B8',callback:v=>(v>=0?'+':'')+v.toFixed(1)+'%'}}}}});}
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{color:'#9CA3AF',font:{size:11},usePointStyle:true,padding:16}},
+        tooltip:{backgroundColor:'#1F2937',borderColor:'#374151',borderWidth:1,padding:12,
+          callbacks:{label:c=>' '+c.dataset.label+': '+(c.parsed.y>=0?'+':'')+c.parsed.y.toFixed(2)+'%'}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4B5563',font:{size:11}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4B5563',font:{size:11},callback:v=>(v>=0?'+':'')+v.toFixed(1)+'%'}}
+      }
+    }
+  });
+})();
 </script>
 
+<!-- POSITIONS -->
 {% if positions %}
 <div class="card">
-  <div class="section-hdr"><h2>Base ETF — Live Positions</h2><span class="muted">Amatya Research AR-ETF-2026-0525 · No stop loss · 2-5yr thesis</span></div>
+  <div class="card-header">
+    <div class="card-title">Base ETF — Live Positions</div>
+    <div class="card-sub">Amatya Research · Risk-Tier Weighted · No stop loss · 2-5yr thesis</div>
+  </div>
   {% set ns=namespace(tc=0,tv=0,tp=0) %}
-  <table><thead><tr><th>Ticker</th><th>Qty</th><th>Avg Cost</th><th>Current</th><th>Mkt Value</th><th>P&L</th><th>P&L %</th></tr></thead><tbody>
-  {% for p in positions %}
-  {% set cost=p.avg_cost*p.quantity %}{% set mval=p.get('market_value',p.current_price*p.quantity) %}
-  {% set ns.tc=ns.tc+cost %}{% set ns.tv=ns.tv+mval %}{% set ns.tp=ns.tp+p.get('unrealized_pnl',0) %}
-  <tr><td><strong>{{p.ticker}}</strong></td><td>{{p.quantity}}</td>
-  <td>${{'%.2f'|format(p.avg_cost)}}</td><td>${{'%.2f'|format(p.current_price)}}</td>
-  <td>${{'%.2f'|format(mval)}}</td>
-  <td class="{{'pos' if p.get('unrealized_pnl',0)>=0 else 'neg'}}">${{'%+.2f'|format(p.get('unrealized_pnl',0))}}</td>
-  <td class="{{'pos' if p.get('pnl_pct',0)>=0 else 'neg'}}">{{'%+.1f'|format(p.get('pnl_pct',0))}}%</td></tr>
-  {% endfor %}
-  <tr class="totals-row"><td>TOTAL</td><td>—</td><td>${{'%.2f'|format(ns.tc)}}</td><td>—</td>
-  <td>${{'%.2f'|format(ns.tv)}}</td>
-  <td class="{{'pos' if ns.tp>=0 else 'neg'}}">${{'%+.2f'|format(ns.tp)}}</td>
-  <td class="{{'pos' if ns.tp>=0 else 'neg'}}">{{'%+.2f'|format((ns.tp/ns.tc*100) if ns.tc else 0)}}%</td></tr>
-  </tbody></table>
-</div>{% endif %}
+  <table>
+    <thead><tr><th>Ticker</th><th>Qty</th><th>Avg Cost</th><th>Current</th><th>Mkt Value</th><th>P&L</th><th>P&L %</th></tr></thead>
+    <tbody>
+    {% for p in positions %}
+    {% set cost=p.avg_cost*p.quantity %}
+    {% set mval=p.get('market_value',p.current_price*p.quantity) %}
+    {% set ns.tc=ns.tc+cost %}{% set ns.tv=ns.tv+mval %}{% set ns.tp=ns.tp+p.get('unrealized_pnl',0) %}
+    <tr>
+      <td><strong>{{p.ticker}}</strong></td>
+      <td style="color:var(--mt)">{{p.quantity}}</td>
+      <td style="color:var(--mt)">${{'%.2f'|format(p.avg_cost)}}</td>
+      <td>${{'%.2f'|format(p.current_price)}}</td>
+      <td>${{'%.2f'|format(mval)}}</td>
+      <td class="{{'pos' if p.get('unrealized_pnl',0)>=0 else 'neg'}}">${{'%+.2f'|format(p.get('unrealized_pnl',0))}}</td>
+      <td class="{{'pos' if p.get('pnl_pct',0)>=0 else 'neg'}}">{{'%+.1f'|format(p.get('pnl_pct',0))}}%</td>
+    </tr>
+    {% endfor %}
+    <tr class="totals">
+      <td>TOTAL</td><td>—</td><td style="color:var(--mt)">${{'%.2f'|format(ns.tc)}}</td><td>—</td>
+      <td>${{'%.2f'|format(ns.tv)}}</td>
+      <td class="{{'pos' if ns.tp>=0 else 'neg'}}">${{'%+.2f'|format(ns.tp)}}</td>
+      <td class="{{'pos' if ns.tp>=0 else 'neg'}}">{{'%+.2f'|format((ns.tp/ns.tc*100) if ns.tc else 0)}}%</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+{% endif %}
 
+<!-- ALPHA -->
 {% if alpha_pos %}
 <div class="card">
-  <div class="section-hdr"><h2>Alpha Layer — Agent Active</h2><span class="muted">Spreads · Options · Hedges · Agent discretion</span></div>
-  <table><thead><tr><th>Ticker</th><th>Structure</th><th>Cost</th><th>MTM</th><th>P&L</th><th>P&L %</th><th>Max Profit</th><th>Exit Rule</th><th>Status</th></tr></thead><tbody>
-  {% for p in alpha_pos %}
-  {% set mtm=p.get('mtm',p.get('cost',0)) %}{% set pnl=p.get('pnl',0) %}{% set pct=p.get('pnl_pct',0) %}
-  <tr><td><strong>{{p.ticker}}</strong></td>
-  <td><span class="chip spread">{{p.get('asset_type','SPREAD')}}</span></td>
-  <td>${{'%.2f'|format(p.get('cost',0))}}</td>
-  <td>${{'%.2f'|format(mtm)}}</td>
-  <td class="{{'pos' if pnl>=0 else 'neg'}}">${{'%+.2f'|format(pnl)}}</td>
-  <td class="{{'pos' if pct>=0 else 'neg'}}">{{'%+.1f'|format(pct)}}%</td>
-  <td>${{'%.2f'|format(p.get('max_profit',0)) if p.get('max_profit') else 'Uncapped'}}</td>
-  <td class="muted">{{p.get('stop_type','Thesis only')}}</td>
-  <td><span class="chip filled">FILLED</span></td></tr>
-  {% endfor %}</tbody></table>
-</div>{% endif %}
+  <div class="card-header">
+    <div class="card-title">Alpha Layer — Agent Active</div>
+    <div class="card-sub">Options · Spreads · Hedges · Full agent discretion</div>
+  </div>
+  <table>
+    <thead><tr><th>Ticker</th><th>Structure</th><th>Cost</th><th>MTM</th><th>P&L</th><th>P&L %</th><th>Max Profit</th><th>Exit Rule</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for p in alpha_pos %}
+    {% set mtm=p.get('mtm',p.get('cost',0)) %}
+    {% set pnl=p.get('pnl',0) %}
+    {% set pct=p.get('pnl_pct',0) %}
+    <tr>
+      <td><strong>{{p.ticker}}</strong></td>
+      <td><span class="chip chip-blue">{{p.get('asset_type','SPREAD')}}</span></td>
+      <td>${{'%.2f'|format(p.get('cost',0))}}</td>
+      <td>${{'%.2f'|format(mtm)}}</td>
+      <td class="{{'pos' if pnl>=0 else 'neg'}}">${{'%+.2f'|format(pnl)}}</td>
+      <td class="{{'pos' if pct>=0 else 'neg'}}">{{'%+.1f'|format(pct)}}%</td>
+      <td style="color:var(--mt)">${{'%.2f'|format(p.get('max_profit',0)) if p.get('max_profit') else 'Uncapped'}}</td>
+      <td><span class="chip chip-purple">{{p.get('stop_type','Thesis only')}}</span></td>
+      <td><span class="chip chip-green">FILLED</span></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
 
+<!-- TRANSACTIONS -->
 {% if txns %}
 <div class="card">
-  <h2>Transaction Log — Confirmed Fills</h2>
+  <div class="card-header">
+    <div class="card-title">Transaction Log</div>
+    <div class="card-sub">Confirmed Schwab fills · Account 668</div>
+  </div>
   {% set ns2=namespace(total=0) %}
-  <table><thead><tr><th>Date</th><th>Ticker</th><th>Action</th><th>Qty</th><th>Fill Price</th><th>Total</th><th>Status</th></tr></thead><tbody>
-  {% for t in txns|reverse %}{% set ns2.total=ns2.total+t.get('total',0) %}
-  <tr><td class="muted">{{t.get('date','')}}</td><td><strong>{{t.get('ticker','')}}</strong></td>
-  <td><span class="chip long">{{t.get('action','BUY')}}</span></td>
-  <td>{{t.get('quantity','')}}</td><td>${{'%.4f'|format(t.get('price',0))}}</td>
-  <td>${{'%.2f'|format(t.get('total',0))}}</td>
-  <td><span class="chip filled">FILLED</span></td></tr>{% endfor %}
-  <tr class="totals-row"><td colspan="5" style="text-align:right;padding-right:14px">TOTAL DEPLOYED</td>
-  <td>${{'%.2f'|format(ns2.total)}}</td><td>—</td></tr></tbody></table>
-</div>{% endif %}
+  <table>
+    <thead><tr><th>Date</th><th>Ticker</th><th>Action</th><th>Qty</th><th>Fill Price</th><th>Total</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for t in txns|reverse %}
+    {% set ns2.total=ns2.total+t.get('total',0) %}
+    <tr>
+      <td style="color:var(--mt)">{{t.get('date','')}}</td>
+      <td><strong>{{t.get('ticker','')}}</strong></td>
+      <td><span class="chip chip-green">{{t.get('action','BUY')}}</span></td>
+      <td style="color:var(--mt)">{{t.get('quantity','')}}</td>
+      <td style="color:var(--mt)">${{'%.4f'|format(t.get('price',0))}}</td>
+      <td>${{'%.2f'|format(t.get('total',0))}}</td>
+      <td><span class="chip chip-green">FILLED</span></td>
+    </tr>
+    {% endfor %}
+    <tr class="totals">
+      <td colspan="5" style="text-align:right;padding-right:16px;color:var(--mt)">TOTAL DEPLOYED</td>
+      <td>${{'%.2f'|format(ns2.total)}}</td><td>—</td>
+    </tr>
+    </tbody>
+  </table>
 </div>
-<footer>American Frontier ETF · GFC LLC · Agent-Managed · Investor view · Auto-refresh 2 min · {{now}}</footer>
+{% endif %}
+
+</div>
+<footer>
+  American Frontier ETF · GFC LLC · AI-Managed · Account 668 · Auto-refresh 2 min · {{now}}<br>
+  <a href="/">← Back to overview</a>
+</footer>
 </body></html>"""
+
 
 # ── ROUTES ────────────────────────────────────────────────────────────────────
 HOLDINGS = [
