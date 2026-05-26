@@ -147,6 +147,13 @@ footer a{color:#a78bfa;text-decoration:none}
   .htable th,.htable td{padding:10px 12px;font-size:12px}
   .alpha-box{padding:28px 20px}
 }
+@media(max-width:640px){
+  .htable th:nth-child(1),.htable td:nth-child(1),
+  .htable th:nth-child(3),.htable td:nth-child(3){display:none}
+  .htable th,.htable td{padding:10px 10px;font-size:12px}
+  .pillars{grid-template-columns:1fr}
+  .two-charts{grid-template-columns:1fr}
+}
 @media(max-width:480px){
   .stats-band{grid-template-columns:1fr 1fr}
   .hero h1{font-size:36px}
@@ -315,7 +322,7 @@ window.addEventListener('DOMContentLoaded', function() {
   <div class="stag">Holdings</div>
   <div class="stitle">10 high-conviction positions.</div>
   <p class="ssub">Risk-tier weighted: ANCHOR names carry more weight. GROWTH offers asymmetric upside. SPECULATIVE is sized for max return with limited capital at risk.</p>
-  <div class="htable">
+  <div class="htable" style="overflow-x:auto;-webkit-overflow-scrolling:touch">
     <table>
       <thead><tr><th>#</th><th>Ticker</th><th>Company</th><th>Pillar</th><th>Tier</th><th>Weight</th></tr></thead>
       <tbody>
@@ -468,6 +475,18 @@ footer{border-top:1px solid var(--br);padding:20px 5%;text-align:center;color:#3
 footer a{color:#a78bfa;text-decoration:none}
 
 /* MOBILE */
+@media(max-width:640px){
+  table{min-width:500px}
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:0 0 14px 14px}
+  th,td{padding:9px 10px;font-size:11px}
+  .grid4{grid-template-columns:repeat(2,1fr)}
+  /* Hide less essential columns on positions table */
+  table.pos-table th:nth-child(3),table.pos-table td:nth-child(3),
+  table.pos-table th:nth-child(5),table.pos-table td:nth-child(5){display:none}
+  /* Hide on txn table */
+  table.txn-table th:nth-child(4),table.txn-table td:nth-child(4),
+  table.txn-table th:nth-child(5),table.txn-table td:nth-child(5){display:none}
+}
 @media(max-width:768px){
   .grid4{grid-template-columns:repeat(2,1fr)}
   .mini-stats{grid-template-columns:repeat(2,1fr)}
@@ -578,7 +597,7 @@ footer a{color:#a78bfa;text-decoration:none}
     <div class="card-sub">Amatya Research · Risk-Tier Weighted · No stop loss · 2-5yr thesis</div>
   </div>
   {% set ns=namespace(tc=0,tv=0,tp=0) %}
-  <table>
+  <div class="table-scroll"><table class="pos-table">
     <thead><tr><th>Ticker</th><th>Qty</th><th>Avg Cost</th><th>Current</th><th>Mkt Value</th><th>P&L</th><th>P&L %</th></tr></thead>
     <tbody>
     {% for p in positions %}
@@ -602,7 +621,7 @@ footer a{color:#a78bfa;text-decoration:none}
       <td class="{{'pos' if ns.tp>=0 else 'neg'}}">{{'%+.2f'|format((ns.tp/ns.tc*100) if ns.tc else 0)}}%</td>
     </tr>
     </tbody>
-  </table>
+  </table></div>
 </div>
 {% endif %}
 
@@ -645,7 +664,7 @@ footer a{color:#a78bfa;text-decoration:none}
     <div class="card-sub">Confirmed Schwab fills · Account 668</div>
   </div>
   {% set ns2=namespace(total=0) %}
-  <table>
+  <div class="table-scroll"><table class="txn-table">
     <thead><tr><th>Date</th><th>Ticker</th><th>Action</th><th>Qty</th><th>Fill Price</th><th>Total</th><th>Status</th></tr></thead>
     <tbody>
     {% for t in txns|reverse %}
