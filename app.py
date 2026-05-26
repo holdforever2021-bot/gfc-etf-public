@@ -196,26 +196,26 @@ footer a{color:#a78bfa;text-decoration:none}
         <div class="leg"><div class="leg-line" style="background:#374151;border-top:2px dashed #374151;height:0"></div>QQQ: <strong style="color:#6B7280;margin-left:4px">${{"{:,.0f}".format(bt.qqq_final)}} (+{{bt.qqq_return}}%)</strong></div>
       </div>
     </div>
-    <canvas id="btChart" style="width:100%;height:320px;display:block"></canvas>
+    <div style="height:320px;position:relative"><canvas id="btChart"></canvas></div>
   </div>
 
   <div class="two-charts">
     <div class="mini-chart-card">
       <div class="mini-chart-title">Portfolio Allocation by Pillar</div>
       <div class="mini-chart-sub">Target weighting across 3 structural themes</div>
-      <canvas id="pillarChart" style="width:100%;height:220px;display:block"></canvas>
+      <div style="height:220px;position:relative"><canvas id="pillarChart"></canvas></div>
     </div>
     <div class="mini-chart-card">
       <div class="mini-chart-title">Allocation by Risk Tier</div>
       <div class="mini-chart-sub">ANCHOR · GROWTH · SPECULATIVE</div>
-      <canvas id="tierChart" style="width:100%;height:220px;display:block"></canvas>
+      <div style="height:220px;position:relative"><canvas id="tierChart"></canvas></div>
     </div>
   </div>
 </div>
 
 <script>
 window.addEventListener('DOMContentLoaded', function() {
-  var bt = {{ bt_json }};
+  var bt = {{ bt_json | safe }};
 
   // Main backtest chart
   new Chart(document.getElementById('btChart'), {
@@ -228,7 +228,7 @@ window.addEventListener('DOMContentLoaded', function() {
       ]
     },
     options: {
-      responsive:false,
+      responsive:true,maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
       plugins:{
         legend:{display:false},
@@ -250,7 +250,7 @@ window.addEventListener('DOMContentLoaded', function() {
       datasets: [{data:[40,30,30],backgroundColor:['#2563EB','#059669','#7C3AED'],borderColor:'#111827',borderWidth:3,hoverOffset:8}]
     },
     options: {
-      responsive:false,
+      responsive:true,maintainAspectRatio:false,
       plugins:{legend:{position:'bottom',labels:{color:'#9CA3AF',font:{size:11},padding:16,usePointStyle:true}}}
     }
   });
@@ -268,7 +268,7 @@ window.addEventListener('DOMContentLoaded', function() {
       }]
     },
     options: {
-      responsive:false,
+      responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},
         tooltip:{callbacks:{label:c=>c.parsed.y+'% of portfolio'}}},
       scales:{
