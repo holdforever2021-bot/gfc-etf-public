@@ -506,11 +506,8 @@ footer a{color:#a78bfa;text-decoration:none}
 </style></head><body>
 
 <nav>
-  <div>
-    <div class="nav-logo">AMERICAN <span>FRONTIER</span> ETF &nbsp;<span style="color:#374151;font-weight:400">/ Investor Portal</span></div>
-  </div>
+  <div class="nav-logo">AMERICAN <span>FRONTIER</span> ETF</div>
   <div class="nav-right">
-    <span style="color:#374151;font-size:11px" class="desktop-only">{{ now }} ET</span>
     <span class="badge">{{ s.get('status','LIVE') }}</span>
     <a href="/">← Overview</a>
     <a href="/logout" style="color:var(--rd)!important">Sign out</a>
