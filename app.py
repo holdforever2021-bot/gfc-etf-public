@@ -10,7 +10,7 @@ app.secret_key = os.environ.get('SECRET_KEY', 'gfc-etf-2026-frontier')
 PIN = os.environ.get('ETF_PIN', '2026')
 DATA_URL = 'https://jarvis.ankurjoshi-demo.com/etf-data'
 
-BACKTEST = {"dates":["2026-01-02","2026-01-05","2026-01-06","2026-01-07","2026-01-08","2026-01-09","2026-01-12","2026-01-13","2026-01-14","2026-01-15","2026-01-16","2026-01-20","2026-01-21","2026-01-22","2026-01-23","2026-01-26","2026-01-27","2026-01-28","2026-01-29","2026-01-30","2026-02-02","2026-02-03","2026-02-04","2026-02-05","2026-02-06","2026-02-09","2026-02-10","2026-02-11","2026-02-12","2026-02-13","2026-02-17","2026-02-18","2026-02-19","2026-02-20","2026-02-23","2026-02-24","2026-02-25","2026-02-26","2026-02-27","2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-20","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22"],"etf":[10000.0,10500.82,10849.13,10882.72,10982.37,11068.87,11204.9,10849.42,11309.4,11157.55,11647.4,11398.7,11100.64,11867.97,11809.47,11464.96,11809.66,11961.11,11192.38,10617.7,10310.59,10871.98,10179.0,9376.26,10069.52,10466.13,10148.05,9785.3,9072.89,9266.02,9386.3,9583.5,9669.98,9385.9,9505.8,9823.04,9637.86,9977.5,9699.36,10266.06,10230.46,10481.05,10105.46,9793.53,10056.82,10024.58,10235.92,9866.82,9745.84,9762.14,9938.35,9441.32,9458.28,9108.71,9479.24,9115.29,9553.52,9151.07,8563.26,8324.8,9078.15,9307.44,9986.11,10038.55,10002.25,10544.03,10299.11,10442.51,10889.67,10774.02,11050.45,11659.56,11771.75,11919.49,11768.31,12138.64,11370.18,11040.9,11199.44,10886.88,10836.9,11464.48,11481.17,11398.31,11381.87,11685.74,10990.94,11887.2,12311.84,12027.25,12701.81,12953.69,12516.37,12427.12,12077.49,12513.12,13093.01,14334.33],"qqq":[10000.0,10079.43,10167.99,10177.78,10119.88,10220.67,10229.16,10213.99,10104.87,10141.25,10132.76,9917.47,10051.54,10124.61,10156.58,10201.27,10293.74,10327.83,10266.02,10142.71,10212.36,10055.45,9879.8,9737.57,9943.4,10019.57,9973.09,9999.84,9796.45,9817.33,9807.21,9880.45,9842.61,9929.7,9809.01,9914.37,10058.06,9936.72,9904.91,9917.96,9811.78,9961.35,9931.33,9781.93,9912.58,9912.74,9911.44,9741.32,9683.58,9792.21,9840.0,9702.83,9672.17,9493.41,9602.38,9536.74,9599.45,9370.33,9187.26,9117.04,9425.69,9542.12,9553.07,9610.55,9612.02,9897.81,9964.76,9979.13,10082.34,10265.41,10409.12,10459.25,10596.1,10562.46,10522.29,10698.33,10638.07,10841.55,10847.26,10738.18,10803.83,10904.59,11009.26,10988.52,11131.09,11362.33,11348.78,11614.8,11648.44,11549.64,11671.63,11754.59,11577.24,11527.43,11456.4,11646.16,11668.37,11717.85],"etf_return":43.3,"qqq_return":17.2,"etf_final":14334.33,"qqq_final":11717.85}
+BACKTEST = {"dates": ["2024-01-02", "2024-01-11", "2024-01-23", "2024-02-01", "2024-02-12", "2024-02-22", "2024-03-04", "2024-03-13", "2024-03-22", "2024-04-03", "2024-04-12", "2024-04-23", "2024-05-02", "2024-05-13", "2024-05-22", "2024-06-03", "2024-06-12", "2024-06-24", "2024-07-03", "2024-07-15", "2024-07-24", "2024-08-02", "2024-08-13", "2024-08-22", "2024-09-03", "2024-09-12", "2024-09-23", "2024-10-02", "2024-10-11", "2024-10-22", "2024-10-31", "2024-11-11", "2024-11-20", "2024-12-02", "2024-12-11", "2024-12-20", "2025-01-02", "2025-01-14", "2025-01-24", "2025-02-04", "2025-02-13", "2025-02-25", "2025-03-06", "2025-03-17", "2025-03-26", "2025-04-04", "2025-04-15", "2025-04-25", "2025-05-06", "2025-05-15", "2025-05-27", "2025-06-05", "2025-06-16", "2025-06-26", "2025-07-08", "2025-07-17", "2025-07-28", "2025-08-06", "2025-08-15", "2025-08-26", "2025-09-05", "2025-09-16", "2025-09-25", "2025-10-06", "2025-10-15", "2025-10-24", "2025-11-04", "2025-11-13", "2025-11-24", "2025-12-04", "2025-12-15", "2025-12-24", "2026-01-06", "2026-01-15", "2026-01-27", "2026-02-05", "2026-02-17", "2026-02-26", "2026-03-09", "2026-03-18", "2026-03-27", "2026-04-08", "2026-04-17", "2026-04-28", "2026-05-07", "2026-05-18", "2026-05-26"], "etf": [10010.0, 10320.38, 10551.0, 11518.36, 12992.04, 15319.86, 13394.17, 13585.85, 13645.61, 13665.77, 12811.57, 13018.67, 13813.68, 14959.04, 14645.52, 14898.03, 14571.85, 14059.9, 14896.65, 16461.5, 15786.53, 16136.94, 16718.22, 20113.86, 19069.58, 18808.16, 20795.79, 19797.61, 20257.02, 21655.82, 19475.74, 23314.28, 23119.72, 27142.22, 29857.11, 33206.87, 49312.93, 34544.89, 43356.6, 43392.79, 41199.14, 33979.62, 30801.45, 30959.9, 28786.14, 23272.96, 27042.4, 29310.21, 30292.13, 35322.95, 39015.53, 36153.18, 40382.22, 41404.78, 41742.28, 50027.26, 47865.38, 46108.45, 45182.63, 43666.35, 41463.07, 47204.99, 62402.17, 79216.27, 100773.44, 76955.26, 68646.85, 54114.47, 54148.31, 63386.3, 54395.92, 60663.12, 67027.7, 67880.13, 68583.16, 51742.73, 51795.03, 57024.2, 56922.73, 52929.21, 46799.04, 56022.45, 63440.55, 55898.89, 57413.98, 64593.31, 82937.23], "qqq": [10000.0, 10167.91, 10518.89, 10479.15, 10813.48, 10881.29, 11029.09, 10935.45, 11102.37, 10995.92, 10900.66, 10572.35, 10617.86, 11020.29, 11334.43, 11270.26, 11793.07, 11807.08, 12232.57, 12359.86, 11543.51, 11179.06, 11523.58, 11829.25, 11504.4, 11788.64, 12050.18, 12022.99, 12307.63, 12372.49, 12070.39, 12818.54, 12552.36, 12854.71, 13219.68, 12938.78, 12749.01, 12620.32, 13233.75, 13104.82, 13390.41, 12826.21, 12198.55, 12062.87, 12121.15, 10576.91, 11460.76, 11825.36, 12046.82, 12993.73, 13043.03, 13132.37, 13370.09, 13683.98, 13837.3, 14074.29, 14233.13, 14212.59, 14463.61, 14345.11, 14431.54, 14810.33, 14886.44, 15242.09, 15104.39, 15477.6, 15531.53, 15259.4, 15178.13, 15624.08, 15313.07, 15669.07, 15656.26, 15615.07, 15849.89, 14993.52, 15100.75, 15300.15, 15262.98, 14940.02, 14146.17, 15240.24, 16315.44, 16534.21, 17474.38, 17749.47, 18363.01], "etf_return": 729.4, "qqq_return": 83.6, "etf_final": 82937.23, "qqq_final": 18363.01, "start_date": "Jan 2024"}
 
 def get_etf_data():
     try:
@@ -22,311 +22,346 @@ def get_etf_data():
 # ── LANDING PAGE ───────────────────────────────────────────────────────────────
 LANDING = """<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>American Frontier ETF — Next Generation AI-Managed Fund</title>
+<title>American Frontier ETF — AI-Managed Thematic Fund</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--purple:#7C3AED;--purple-light:#8B5CF6;--dark:#0A0A14;--card:#111827;--border:#1F2937;--text:#F9FAFB;--muted:#9CA3AF;--green:#10B981;--red:#EF4444}
-body{background:var(--dark);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.6}
+:root{--p:#7C3AED;--pl:#8B5CF6;--dk:#0A0A14;--cd:#111827;--br:#1F2937;--tx:#F9FAFB;--mt:#9CA3AF;--gr:#10B981}
+html{scroll-behavior:smooth}
+body{background:var(--dk);color:var(--tx);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,20,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--br);padding:0 5%;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:13px;font-weight:800;letter-spacing:.08em}
+.nav-logo span{color:var(--p)}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:var(--mt);font-size:13px;font-weight:500;text-decoration:none;transition:color .15s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:var(--p);color:#fff!important;padding:8px 20px;border-radius:8px;font-weight:700!important}
+.nav-cta:hover{background:var(--pl)!important}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,20,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{font-size:14px;font-weight:800;letter-spacing:.08em;color:#fff}
-.nav-logo span{color:var(--purple)}
-.nav-cta{background:var(--purple);color:#fff;padding:9px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:background .15s}
-.nav-cta:hover{background:var(--purple-light)}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:100px 5% 60px;background:radial-gradient(ellipse 100% 70% at 50% -10%,rgba(124,58,237,.25) 0%,transparent 65%)}
+.hero-tag{display:inline-block;background:rgba(124,58,237,.12);color:var(--pl);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:5px 16px;border-radius:20px;border:1px solid rgba(124,58,237,.25);margin-bottom:24px}
+.hero h1{font-size:clamp(36px,6vw,76px);font-weight:900;line-height:1.06;letter-spacing:-.03em;margin-bottom:18px}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,#c4b5fd,#7C3AED);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(15px,2vw,18px);color:var(--mt);max-width:560px;margin:0 auto 20px;line-height:1.75}
+.hero-scroll{margin-top:48px;color:var(--mt);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.hero-scroll a{color:var(--mt);text-decoration:none}
 
-/* HERO */
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,58,237,.2) 0%, transparent 70%)}
-.hero-tag{display:inline-block;background:rgba(124,58,237,.15);color:var(--purple-light);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:6px 16px;border-radius:20px;border:1px solid rgba(124,58,237,.3);margin-bottom:28px}
-.hero h1{font-size:clamp(40px,7vw,80px);font-weight:900;line-height:1.05;letter-spacing:-.03em;margin-bottom:20px}
-.hero h1 span{background:linear-gradient(135deg,#a78bfa,#7C3AED,#4f46e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{font-size:18px;color:var(--muted);max-width:580px;margin:0 auto 48px;font-weight:400;line-height:1.7}
-.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.btn-primary{background:var(--purple);color:#fff;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none;transition:all .15s;box-shadow:0 0 40px rgba(124,58,237,.4)}
-.btn-primary:hover{background:var(--purple-light);transform:translateY(-1px)}
-.btn-secondary{background:rgba(255,255,255,.06);color:#fff;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:600;text-decoration:none;border:1px solid rgba(255,255,255,.12);transition:all .15s}
-.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.stats-band{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--br);border-bottom:1px solid var(--br)}
+.stat{background:var(--cd);padding:28px 20px;text-align:center;border-right:1px solid var(--br)}
+.stat:last-child{border-right:none}
+.sv{font-size:clamp(26px,4vw,40px);font-weight:800;letter-spacing:-.02em;line-height:1}
+.sv.g{color:var(--gr)}.sv.p{color:#a78bfa}
+.sl{font-size:11px;color:var(--mt);text-transform:uppercase;letter-spacing:.08em;margin-top:6px;font-weight:600}
+.ss{font-size:11px;color:#4B5563;margin-top:3px}
 
-/* STATS BAR */
-.stats-bar{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:32px 40px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border)}
-.stat{background:var(--card);padding:28px 32px;text-align:center}
-.stat-val{font-size:36px;font-weight:800;letter-spacing:-.02em;line-height:1}
-.stat-val.green{color:var(--green)}
-.stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:6px;font-weight:600}
-.stat-sub{font-size:12px;color:var(--muted);margin-top:4px}
-
-/* SECTIONS */
-section{padding:96px 40px;max-width:1200px;margin:0 auto}
-.section-tag{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--purple-light);margin-bottom:12px}
-.section-title{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:16px}
-.section-sub{font-size:16px;color:var(--muted);max-width:600px;line-height:1.7}
+.section{padding:80px 5%;max-width:1280px;margin:0 auto}
+.stag{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--pl);margin-bottom:10px}
+.stitle{font-size:clamp(26px,3.5vw,42px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:14px}
+.ssub{font-size:15px;color:var(--mt);max-width:580px;line-height:1.75}
 
 /* CHART */
-.chart-section{padding:0 40px 96px;max-width:1200px;margin:0 auto}
-.chart-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;position:relative;overflow:hidden}
-.chart-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--purple),transparent)}
-.chart-meta{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:20px}
-.chart-title{font-size:20px;font-weight:700}
-.chart-title small{display:block;font-size:13px;color:var(--muted);font-weight:400;margin-top:4px}
-.chart-legend{display:flex;gap:24px}
-.leg{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
-.leg-dot{width:12px;height:3px;border-radius:2px}
+.chart-wrap{background:var(--cd);border:1px solid var(--br);border-radius:16px;padding:32px;margin-top:40px;position:relative}
+.chart-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--p),transparent);border-radius:16px 16px 0 0}
+.chart-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap}
+.chart-title-main{font-size:18px;font-weight:700}
+.chart-sub-text{font-size:12px;color:var(--mt);margin-top:3px}
+.legend{display:flex;gap:20px;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600}
+.leg-line{width:20px;height:3px;border-radius:2px}
+
+/* SIDE-BY-SIDE CHARTS */
+.two-charts{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px}
+.mini-chart-card{background:var(--cd);border:1px solid var(--br);border-radius:14px;padding:24px}
+.mini-chart-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.mini-chart-sub{font-size:11px;color:var(--mt);margin-bottom:16px}
 
 /* PILLARS */
-.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
-.pillar-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:32px;position:relative;overflow:hidden;transition:border-color .2s}
-.pillar-card:hover{border-color:rgba(124,58,237,.5)}
-.pillar-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
-.p1::after{background:linear-gradient(90deg,#3B82F6,#60A5FA)}
-.p2::after{background:linear-gradient(90deg,#10B981,#34D399)}
-.p3::after{background:linear-gradient(90deg,#7C3AED,#A78BFA)}
-.pillar-num{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
-.p1 .pillar-num{color:#60A5FA}.p2 .pillar-num{color:#34D399}.p3 .pillar-num{color:#A78BFA}
-.pillar-card h3{font-size:18px;font-weight:700;margin-bottom:10px}
-.pillar-card p{font-size:14px;color:var(--muted);line-height:1.7}
-.pillar-tickers{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
-.tick{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
-.tick-1{background:rgba(59,130,246,.15);color:#60A5FA}
-.tick-2{background:rgba(16,185,129,.15);color:#34D399}
-.tick-3{background:rgba(124,58,237,.15);color:#A78BFA}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
+.pillar{background:var(--cd);border:1px solid var(--br);border-radius:14px;padding:28px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+.pillar:hover{transform:translateY(-3px);border-color:rgba(124,58,237,.4)}
+.pillar-accent{position:absolute;bottom:0;left:0;right:0;height:2px}
+.pa1{background:linear-gradient(90deg,#2563EB,#60A5FA)}
+.pa2{background:linear-gradient(90deg,#059669,#34D399)}
+.pa3{background:linear-gradient(90deg,var(--p),#a78bfa)}
+.pn{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.pn1{color:#60A5FA}.pn2{color:#34D399}.pn3{color:#a78bfa}
+.pillar h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.pillar p{font-size:13px;color:var(--mt);line-height:1.65}
+.tickers{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.tk{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px}
+.tk1{background:rgba(37,99,235,.15);color:#60A5FA}
+.tk2{background:rgba(5,150,105,.15);color:#34D399}
+.tk3{background:rgba(124,58,237,.15);color:#a78bfa}
+
+/* TABLE */
+.htable{background:var(--cd);border:1px solid var(--br);border-radius:14px;overflow:hidden;margin-top:36px}
+.htable table{width:100%;border-collapse:collapse}
+.htable th{background:#0d0d1a;padding:11px 18px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mt);text-align:left;border-bottom:1px solid var(--br)}
+.htable td{padding:12px 18px;font-size:13px;border-bottom:1px solid rgba(31,41,55,.5)}
+.htable tr:last-child td{border-bottom:none}
+.htable tr:hover td{background:rgba(124,58,237,.04)}
+.tier{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px}
+.t-a{background:rgba(124,58,237,.15);color:#a78bfa}
+.t-g{background:rgba(16,185,129,.15);color:#34D399}
+.t-s{background:rgba(245,158,11,.15);color:#FCD34D}
 
 /* WHY */
-.why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:48px}
-.why-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:32px}
-.why-icon{font-size:28px;margin-bottom:16px}
-.why-card h3{font-size:16px;font-weight:700;margin-bottom:8px}
-.why-card p{font-size:14px;color:var(--muted);line-height:1.7}
+.why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:40px}
+.why{background:var(--cd);border:1px solid var(--br);border-radius:14px;padding:28px;transition:border-color .2s}
+.why:hover{border-color:rgba(124,58,237,.35)}
+.why-icon{font-size:26px;margin-bottom:14px}
+.why h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.why p{font-size:13px;color:var(--mt);line-height:1.7}
 
-/* HOLDINGS */
-.holdings-table{margin-top:40px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.holdings-table table{width:100%;border-collapse:collapse}
-.holdings-table th{background:#0d0d1a;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;border-bottom:1px solid var(--border)}
-.holdings-table td{padding:14px 20px;font-size:14px;border-bottom:1px solid rgba(31,41,55,.5)}
-.holdings-table tr:last-child td{border-bottom:none}
-.holdings-table tr:hover td{background:rgba(124,58,237,.05)}
-.pct-bar{display:inline-block;height:4px;border-radius:2px;background:var(--purple);opacity:.7;vertical-align:middle;margin-left:8px}
-.tier-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px}
-.t-anchor{background:rgba(124,58,237,.15);color:#A78BFA}
-.t-growth{background:rgba(16,185,129,.15);color:#34D399}
-.t-spec{background:rgba(245,158,11,.15);color:#FCD34D}
-
-/* ALPHA */
-.alpha-box{background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(79,70,229,.08));border:1px solid rgba(124,58,237,.3);border-radius:16px;padding:48px;margin-top:48px;text-align:center}
-.alpha-box h3{font-size:24px;font-weight:800;margin-bottom:12px}
-.alpha-box p{color:var(--muted);max-width:600px;margin:0 auto 28px;font-size:15px;line-height:1.7}
-.alpha-features{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.af{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600}
+/* ALPHA BOX */
+.alpha-box{background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(79,70,229,.07));border:1px solid rgba(124,58,237,.25);border-radius:16px;padding:44px;margin-top:40px;text-align:center}
+.alpha-box h3{font-size:22px;font-weight:800;margin-bottom:10px}
+.alpha-box p{color:var(--mt);max-width:580px;margin:0 auto 24px;font-size:14px;line-height:1.75}
+.af-tags{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.aft{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600}
 
 /* DISCLAIMER */
-.disclaimer{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:24px 32px;margin-top:48px}
-.disclaimer p{font-size:12px;color:var(--muted);line-height:1.8}
+.disc{background:rgba(255,255,255,.025);border:1px solid var(--br);border-radius:12px;padding:22px 28px;margin-top:40px}
+.disc p{font-size:11.5px;color:#4B5563;line-height:1.9}
 
-/* FOOTER */
-footer{border-top:1px solid var(--border);padding:40px;text-align:center;color:var(--muted);font-size:13px}
+footer{border-top:1px solid var(--br);padding:36px 5%;text-align:center;color:var(--mt);font-size:12px}
 footer strong{color:#fff}
+footer a{color:#a78bfa;text-decoration:none}
 
-/* RESPONSIVE */
+/* MOBILE */
 @media(max-width:768px){
-  .stats-bar{grid-template-columns:repeat(2,1fr)}
-  .pillars{grid-template-columns:1fr}
-  .why-grid{grid-template-columns:1fr}
   nav{padding:0 20px}
-  section{padding:60px 20px}
-  .chart-section{padding:0 20px 60px}
+  .nav-links a:not(.nav-cta){display:none}
+  .hero{padding:80px 20px 40px}
+  .stats-band{grid-template-columns:repeat(2,1fr)}
+  .stat{padding:20px 14px}
+  .sv{font-size:28px}
+  .section{padding:56px 20px}
+  .pillars{grid-template-columns:1fr}
+  .two-charts{grid-template-columns:1fr}
+  .why-grid{grid-template-columns:1fr}
+  .chart-wrap{padding:20px}
+  .chart-head{flex-direction:column}
+  .legend{gap:12px}
+  .htable th,.htable td{padding:10px 12px;font-size:12px}
+  .alpha-box{padding:28px 20px}
+}
+@media(max-width:480px){
+  .stats-band{grid-template-columns:1fr 1fr}
+  .hero h1{font-size:36px}
 }
 </style></head><body>
 
 <nav>
   <div class="nav-logo">AMERICAN <span>FRONTIER</span> ETF</div>
-  <a href="/dashboard" class="nav-cta">Investor Portal →</a>
+  <div class="nav-links">
+    <a href="#performance">Performance</a>
+    <a href="#strategy">Strategy</a>
+    <a href="#portfolio">Portfolio</a>
+    <a href="/dashboard" class="nav-cta">Investor Portal →</a>
+  </div>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
   <div>
-    <div class="hero-tag">AI-Managed · Launched May 26, 2026</div>
-    <h1>The Next American<br><span>Frontier ETF</span></h1>
-    <p class="hero-sub">A 10-stock thematic portfolio built around three structural megatrends — powered by an AI agent that actively manages risk and generates alpha.</p>
-    <div class="hero-btns">
-      <a href="#backtest" class="btn-primary">See the Performance</a>
-      <a href="/dashboard" class="btn-secondary">Live Portfolio →</a>
-    </div>
+    <div class="hero-tag">AI-Managed · Launched May 26, 2026 · GFC LLC</div>
+    <h1>The Next American<br><em>Frontier ETF</em></h1>
+    <p class="hero-sub">A concentrated 10-stock thematic portfolio across three structural megatrends. AI-managed alpha layer. Transparent. Built for the long term.</p>
+    <div class="hero-scroll"><a href="#performance">↓ Explore the strategy</a></div>
   </div>
 </div>
 
-<!-- STATS BAR -->
-<div class="stats-bar">
-  <div class="stat">
-    <div class="stat-val green">+43.3%</div>
-    <div class="stat-label">Backtest Return</div>
-    <div class="stat-sub">Jan 1 – May 26, 2026</div>
-  </div>
-  <div class="stat">
-    <div class="stat-val green">+26.1%</div>
-    <div class="stat-label">Alpha vs Nasdaq</div>
-    <div class="stat-sub">Outperformed QQQ by 26pts</div>
-  </div>
-  <div class="stat">
-    <div class="stat-val" style="color:#A78BFA">10</div>
-    <div class="stat-label">Conviction Holdings</div>
-    <div class="stat-sub">3 structural pillars</div>
-  </div>
-  <div class="stat">
-    <div class="stat-val" style="color:#60A5FA">AI</div>
-    <div class="stat-label">Alpha Management</div>
-    <div class="stat-sub">Autonomous agent layer</div>
-  </div>
+<div class="stats-band">
+  <div class="stat"><div class="sv g">+729%</div><div class="sl">Backtest Return</div><div class="ss">Jan 2024 – May 2026</div></div>
+  <div class="stat"><div class="sv g">+645%</div><div class="sl">Alpha vs Nasdaq</div><div class="ss">vs QQQ +84% same period</div></div>
+  <div class="stat"><div class="sv p">3</div><div class="sl">Structural Pillars</div><div class="ss">Sovereign · Space · Physical AI</div></div>
+  <div class="stat"><div class="sv p">AI</div><div class="sl">Alpha Layer</div><div class="ss">Autonomous options management</div></div>
 </div>
 
-<!-- BACKTEST CHART -->
-<div class="chart-section" id="backtest" style="padding-top:96px">
-  <div style="max-width:1200px;margin:0 auto 32px">
-    <div class="section-tag">Performance</div>
-    <div class="section-title">$10,000 invested on January 1, 2026</div>
-    <p class="section-sub">Backtested performance of the American Frontier ETF at risk-tier weights versus the Nasdaq 100 (QQQ). Past performance is hypothetical and does not guarantee future results.</p>
-  </div>
-  <div class="chart-card">
-    <div class="chart-meta">
+<!-- PERFORMANCE -->
+<div class="section" id="performance">
+  <div class="stag">Performance</div>
+  <div class="stitle">$10,000 invested January 2024.<br>See where it is today.</div>
+  <p class="ssub">Backtested performance of the American Frontier ETF portfolio at risk-tier weights vs. Nasdaq 100 (QQQ). Holdings adjusted for FLY IPO in Aug 2025.</p>
+
+  <div class="chart-wrap">
+    <div class="chart-head">
       <div>
-        <div class="chart-title">Growth of $10,000
-          <small>Jan 2026 – May 2026 · Hypothetical backtest · Risk-tier weighted</small>
-        </div>
+        <div class="chart-title-main">Growth of $10,000 · Jan 2024 – May 2026</div>
+        <div class="chart-sub-text">Hypothetical backtest · Risk-tier weighted · FLY weight redistributed pre-IPO</div>
       </div>
-      <div class="chart-legend">
-        <div class="leg"><div class="leg-dot" style="background:#7C3AED;height:3px;width:24px"></div>American Frontier ETF: <strong style="color:#A78BFA;margin-left:4px">${{"{:,.0f}".format(bt.etf_final)}} (+{{bt.etf_return}}%)</strong></div>
-        <div class="leg"><div class="leg-dot" style="background:#4B5563;height:2px;width:24px;border-top:2px dashed #4B5563"></div>QQQ (Nasdaq): <strong style="color:#9CA3AF;margin-left:4px">${{"{:,.0f}".format(bt.qqq_final)}} (+{{bt.qqq_return}}%)</strong></div>
+      <div class="legend">
+        <div class="leg"><div class="leg-line" style="background:#7C3AED"></div>Frontier ETF: <strong style="color:#a78bfa;margin-left:4px">${{"{:,.0f}".format(bt.etf_final)}} (+{{bt.etf_return}}%)</strong></div>
+        <div class="leg"><div class="leg-line" style="background:#374151;border-top:2px dashed #374151;height:0"></div>QQQ: <strong style="color:#6B7280;margin-left:4px">${{"{:,.0f}".format(bt.qqq_final)}} (+{{bt.qqq_return}}%)</strong></div>
       </div>
     </div>
-    <canvas id="btChart" height="60"></canvas>
+    <div style="position:relative;height:320px"><canvas id="btChart"></canvas></div>
+  </div>
+
+  <div class="two-charts">
+    <div class="mini-chart-card">
+      <div class="mini-chart-title">Portfolio Allocation by Pillar</div>
+      <div class="mini-chart-sub">Target weighting across 3 structural themes</div>
+      <div style="position:relative;height:200px"><canvas id="pillarChart"></canvas></div>
+    </div>
+    <div class="mini-chart-card">
+      <div class="mini-chart-title">Allocation by Risk Tier</div>
+      <div class="mini-chart-sub">ANCHOR · GROWTH · SPECULATIVE</div>
+      <div style="position:relative;height:200px"><canvas id="tierChart"></canvas></div>
+    </div>
   </div>
 </div>
+
 <script>
-var bt={{ bt_json }};
-new Chart(document.getElementById('btChart'),{
-  type:'line',
-  data:{labels:bt.dates,datasets:[
-    {label:'American Frontier ETF',data:bt.etf,borderColor:'#7C3AED',backgroundColor:'rgba(124,58,237,.1)',borderWidth:2.5,pointRadius:0,tension:0.4,fill:true},
-    {label:'QQQ (Nasdaq 100)',data:bt.qqq,borderColor:'#4B5563',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:0.4,fill:false,borderDash:[6,3]},
-  ]},
-  options:{responsive:true,interaction:{mode:'index',intersect:false},
-    plugins:{legend:{display:false},tooltip:{
-      backgroundColor:'#1F2937',borderColor:'#374151',borderWidth:1,
-      callbacks:{label:c=>' '+c.dataset.label+': $'+c.parsed.y.toLocaleString('en',{maximumFractionDigits:0})}}},
-    scales:{
-      x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#6B7280',font:{size:11},maxTicksLimit:8}},
-      y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#6B7280',font:{size:11},callback:v=>'$'+v.toLocaleString('en',{maximumFractionDigits:0})}}
-    }}
+window.addEventListener('DOMContentLoaded', function() {
+  var bt = {{ bt_json }};
+
+  // Main backtest chart
+  new Chart(document.getElementById('btChart'), {
+    type: 'line',
+    data: {
+      labels: bt.dates,
+      datasets: [
+        {label:'American Frontier ETF',data:bt.etf,borderColor:'#7C3AED',backgroundColor:'rgba(124,58,237,.12)',borderWidth:2.5,pointRadius:0,tension:0.4,fill:true},
+        {label:'QQQ (Nasdaq 100)',data:bt.qqq,borderColor:'#374151',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:0.4,fill:false,borderDash:[6,3]},
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{backgroundColor:'#1F2937',borderColor:'#374151',borderWidth:1,padding:12,
+          callbacks:{label:c=>' '+c.dataset.label+': $'+c.parsed.y.toLocaleString('en',{maximumFractionDigits:0})}}
+      },
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4B5563',font:{size:11},maxTicksLimit:10}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4B5563',font:{size:11},callback:v=>'$'+v.toLocaleString('en',{maximumFractionDigits:0})}}
+      }
+    }
+  });
+
+  // Pillar pie chart
+  new Chart(document.getElementById('pillarChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Pillar 1 · Sovereign', 'Pillar 2 · Space', 'Pillar 3 · Physical AI'],
+      datasets: [{data:[40,30,30],backgroundColor:['#2563EB','#059669','#7C3AED'],borderColor:'#111827',borderWidth:3,hoverOffset:8}]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{color:'#9CA3AF',font:{size:11},padding:16,usePointStyle:true}}}
+    }
+  });
+
+  // Tier bar chart
+  new Chart(document.getElementById('tierChart'), {
+    type: 'bar',
+    data: {
+      labels: ['ANCHOR','GROWTH','SPECULATIVE'],
+      datasets: [{
+        data:[50,40,10],
+        backgroundColor:['rgba(124,58,237,.7)','rgba(16,185,129,.7)','rgba(245,158,11,.7)'],
+        borderColor:['#7C3AED','#10B981','#F59E0B'],
+        borderWidth:2, borderRadius:6
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:c=>c.parsed.y+'% of portfolio'}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#9CA3AF',font:{size:11}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4B5563',font:{size:11},callback:v=>v+'%'},max:60}
+      }
+    }
+  });
 });
 </script>
 
-<!-- PILLARS -->
-<section>
-  <div class="section-tag">Investment Thesis</div>
-  <div class="section-title">Three structural megatrends.<br>One concentrated portfolio.</div>
-  <p class="section-sub">The American Frontier ETF is built on the conviction that three structural forces will define the next decade of wealth creation — and most investors are underexposed to all three.</p>
+<!-- STRATEGY / PILLARS -->
+<div class="section" id="strategy">
+  <div class="stag">Investment Thesis</div>
+  <div class="stitle">Three forces shaping the next decade.</div>
+  <p class="ssub">The American Frontier ETF is built on three structural megatrends that most retail investors are dramatically underexposed to.</p>
   <div class="pillars">
-    <div class="pillar-card p1">
-      <div class="pillar-num">Pillar 1 · 40% Allocation</div>
+    <div class="pillar">
+      <div class="pn pn1">Pillar 1 · 40% Allocation</div>
       <h3>Sovereign Infrastructure</h3>
-      <p>5G/6G networks, direct-to-cell satellites, titanium manufacturing, and rare earth supply chains being rebuilt outside China's control. The backbone nations need to survive the next era of competition.</p>
-      <div class="pillar-tickers">
-        {% for t in ['NOK','ASTS','IPX','USAR'] %}<span class="tick tick-1">{{t}}</span>{% endfor %}
-      </div>
+      <p>5G/6G networks, direct-to-cell satellites, titanium manufacturing, and rare earth supply chains rebuilt outside China's control. The backbone nations need to build for the next era of competition.</p>
+      <div class="tickers">{% for t in ['NOK','ASTS','IPX','USAR'] %}<span class="tk tk1">{{t}}</span>{% endfor %}</div>
+      <div class="pillar-accent pa1"></div>
     </div>
-    <div class="pillar-card p2">
-      <div class="pillar-num">Pillar 2 · 30% Allocation</div>
+    <div class="pillar">
+      <div class="pn pn2">Pillar 2 · 30% Allocation</div>
       <h3>The New High Ground</h3>
-      <p>Space launches, lunar infrastructure, quantum computing. The commercial and military contest is moving above the atmosphere. Early movers in this frontier will compound for decades.</p>
-      <div class="pillar-tickers">
-        {% for t in ['FLY','LUNR','RGTI'] %}<span class="tick tick-2">{{t}}</span>{% endfor %}
-      </div>
+      <p>Space launches, lunar infrastructure, quantum computing. The commercial and military contest is moving above the atmosphere. Early movers will compound for decades.</p>
+      <div class="tickers">{% for t in ['FLY','LUNR','RGTI'] %}<span class="tk tk2">{{t}}</span>{% endfor %}</div>
+      <div class="pillar-accent pa2"></div>
     </div>
-    <div class="pillar-card p3">
-      <div class="pillar-num">Pillar 3 · 30% Allocation</div>
+    <div class="pillar">
+      <div class="pn pn3">Pillar 3 · 30% Allocation</div>
       <h3>Intelligent Physical World</h3>
-      <p>Enterprise AI workflows, organ transport logistics, LiDAR and physical AI systems. Intelligence is leaving the screen and embedding itself in the real world — in hospitals, factories, and infrastructure.</p>
-      <div class="pillar-tickers">
-        {% for t in ['NOW','TMDX','OUST'] %}<span class="tick tick-3">{{t}}</span>{% endfor %}
-      </div>
+      <p>Enterprise AI, organ transport logistics, LiDAR and physical AI systems. Intelligence is leaving the screen and embedding itself into hospitals, factories, and infrastructure.</p>
+      <div class="tickers">{% for t in ['NOW','TMDX','OUST'] %}<span class="tk tk3">{{t}}</span>{% endfor %}</div>
+      <div class="pillar-accent pa3"></div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- HOLDINGS -->
-<section style="padding-top:0">
-  <div class="section-tag">Portfolio</div>
-  <div class="section-title">10 high-conviction holdings</div>
-  <p class="section-sub">Risk-tier weighted allocation: ANCHOR names (revenue, momentum) carry more weight. GROWTH names offer asymmetric upside. SPECULATIVE names are sized for maximum return with limited capital at risk.</p>
-  <div class="holdings-table">
+<!-- PORTFOLIO TABLE -->
+<div class="section" id="portfolio" style="padding-top:0">
+  <div class="stag">Holdings</div>
+  <div class="stitle">10 high-conviction positions.</div>
+  <p class="ssub">Risk-tier weighted: ANCHOR names carry more weight. GROWTH offers asymmetric upside. SPECULATIVE is sized for max return with limited capital at risk.</p>
+  <div class="htable">
     <table>
       <thead><tr><th>#</th><th>Ticker</th><th>Company</th><th>Pillar</th><th>Tier</th><th>Weight</th></tr></thead>
       <tbody>
         {% for h in holdings %}
         <tr>
-          <td style="color:#6B7280">{{loop.index}}</td>
+          <td style="color:#374151">{{loop.index}}</td>
           <td><strong>{{h.ticker}}</strong></td>
-          <td style="color:#9CA3AF">{{h.name}}</td>
-          <td><span class="tick tick-{{h.p}}">P{{h.p}}</span></td>
-          <td><span class="tier-badge t-{{h.tier_class}}">{{h.tier}}</span></td>
-          <td>{{h.weight}}% <div class="pct-bar" style="width:{{h.weight*3}}px"></div></td>
+          <td style="color:#6B7280">{{h.name}}</td>
+          <td><span class="tk tk{{h.p}}">P{{h.p}}</span></td>
+          <td><span class="tier t-{{h.tier_class}}">{{h.tier}}</span></td>
+          <td>{{h.weight}}%</td>
         </tr>{% endfor %}
       </tbody>
     </table>
   </div>
-</section>
 
-<!-- WHY -->
-<section style="padding-top:0">
-  <div class="section-tag">Why This ETF</div>
-  <div class="section-title">Built different from day one.</div>
-  <div class="why-grid">
-    <div class="why-card">
-      <div class="why-icon">🤖</div>
-      <h3>AI-Managed Alpha Layer</h3>
-      <p>20% of capital is actively managed by an AI agent — no human emotions, no hesitation. The agent analyzes options chains, identifies catalysts, and executes spread strategies autonomously to beat the base portfolio.</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">🎯</div>
-      <h3>Thesis-Driven, Not Momentum</h3>
-      <p>No stop losses on base positions. Each holding is a 2-5 year structural thesis. The ETF holds through volatility because the underlying trends — sovereign infrastructure, space, physical AI — are decade-long forces.</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">📊</div>
-      <h3>Monthly Research Updates</h3>
-      <p>The portfolio rebalances monthly based on updated Amatya Research conviction reports. If a name's thesis weakens or a stronger opportunity emerges, the agent recommends substitution to the portfolio manager for approval.</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">🔒</div>
-      <h3>Transparent & Secure</h3>
-      <p>All positions, transactions, and agent decisions are logged and visible to investors in real time. The AI agent can trade freely but cannot move or transfer funds — security enforced at the API layer, not just policy.</p>
-    </div>
+  <div class="why-grid" style="margin-top:60px">
+    <div class="why"><div class="why-icon">🤖</div><h3>AI-Managed Alpha Layer</h3><p>20% of capital is actively managed by an AI agent — no emotions, no hesitation. The agent analyzes options chains, identifies catalysts, and executes spread strategies to beat the base portfolio.</p></div>
+    <div class="why"><div class="why-icon">🎯</div><h3>Thesis-Driven, Not Stop-Loss Driven</h3><p>No stop losses on base positions. Each holding is a 2-5 year structural thesis. The ETF holds through volatility because the underlying trends are decade-long structural forces, not momentum plays.</p></div>
+    <div class="why"><div class="why-icon">📊</div><h3>Monthly Research Updates</h3><p>The portfolio rebalances monthly based on updated Amatya Research conviction reports. If a name's thesis weakens, the agent recommends substitution to the portfolio manager for approval.</p></div>
+    <div class="why"><div class="why-icon">🔒</div><h3>Transparent & Secure</h3><p>All positions, transactions, and agent decisions are logged and visible in real time. The AI agent can trade freely but cannot transfer funds — enforced at the API layer.</p></div>
   </div>
 
   <div class="alpha-box">
-    <h3>The Alpha Layer — What Makes This Different</h3>
-    <p>Most ETFs are passive index trackers. American Frontier is a thematic portfolio with an active AI agent that manages a 20% risk capital layer — deploying options spreads, hedges, and tactical bets tied to specific near-term catalysts while the base portfolio compounds over years.</p>
-    <div class="alpha-features">
-      <span class="af">Bull call spreads</span>
-      <span class="af">Catalyst-driven entries</span>
-      <span class="af">Vol arbitrage</span>
-      <span class="af">Downside hedging</span>
-      <span class="af">Dynamic reweighting</span>
+    <h3>The Alpha Layer</h3>
+    <p>Most ETFs are passive. American Frontier has an active AI agent managing a 20% risk layer — deploying options spreads, hedges, and tactical bets tied to near-term catalysts while the base portfolio compounds over years.</p>
+    <div class="af-tags">
+      <span class="aft">Bull call spreads</span>
+      <span class="aft">Catalyst-driven entries</span>
+      <span class="aft">Vol arbitrage</span>
+      <span class="aft">Downside hedging</span>
+      <span class="aft">Agent discretion</span>
     </div>
   </div>
 
-  <div class="disclaimer">
-    <p><strong style="color:#9CA3AF">Important Disclosure:</strong> The American Frontier ETF is a personal investment vehicle managed by GFC LLC. Backtest performance from January 1, 2026 to May 26, 2026 is hypothetical and based on actual historical prices of the underlying securities at risk-tier weights. Past hypothetical performance does not guarantee future results. This is not an SEC-registered fund or investment product. All investing involves risk including the possible loss of principal. The AI agent operates within defined parameters set by the portfolio manager. This material is for informational purposes only and does not constitute investment advice.</p>
+  <div class="disc">
+    <p><strong style="color:#6B7280">Important Disclosure:</strong> The American Frontier ETF is a personal investment vehicle managed by GFC LLC. Backtest performance (Jan 2024–May 2026) is hypothetical, based on actual historical prices at risk-tier weights, with FLY weight redistributed to other holdings prior to its August 2025 IPO. Past hypothetical performance does not guarantee future results. This is not an SEC-registered fund. All investing involves risk including possible loss of principal. This material is for informational purposes only and does not constitute investment advice.</p>
   </div>
-</section>
+</div>
 
 <footer>
-  <strong>The American Frontier ETF</strong> · GFC LLC · Launched May 26, 2026 · AI-Managed · Account 668 · Schwab<br>
-  <span style="margin-top:8px;display:block">Interested in investing? <a href="/dashboard" style="color:#A78BFA;text-decoration:none">Access the Investor Portal →</a></span>
+  <strong>The American Frontier ETF</strong> · GFC LLC · AI-Managed · Launched May 26, 2026<br>
+  <span style="margin-top:8px;display:block;color:#4B5563">Investor access: <a href="/dashboard">Investor Portal →</a></span>
 </footer>
 </body></html>"""
+
 
 # ── LOGIN ─────────────────────────────────────────────────────────────────────
 LOGIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8">
