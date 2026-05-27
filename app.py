@@ -677,9 +677,9 @@ footer a{color:#a78bfa;text-decoration:none}
   new Chart(document.getElementById('liveChart'),{
     type:'line',
     data:{labels:hist.map(h=>h.date),datasets:[
-      {label:'Agent ETF (+ Alpha)',data:hist.map(h=>h.agent_return_pct||0),borderColor:'#7C3AED',backgroundColor:'rgba(124,58,237,.1)',borderWidth:2.5,pointRadius:3,tension:0.4,fill:true},
-      {label:'Base ETF',data:hist.map(h=>h.base_return_pct||0),borderColor:'#2563EB',backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:0.4,fill:false,borderDash:[5,3]},
-      {label:'QQQ',data:hist.map(h=>h.qqq_return_pct||0),borderColor:'#374151',backgroundColor:'transparent',borderWidth:1.5,pointRadius:2,tension:0.4,fill:false,borderDash:[3,3]},
+      {label:'Agent ETF (+ Alpha)',data:hist.map(h=>h.agent_return_pct||0),borderColor:'#A78BFA',backgroundColor:'rgba(167,139,250,.08)',borderWidth:2.5,pointRadius:3,tension:0.4,fill:true},
+      {label:'Base ETF',data:hist.map(h=>h.base_return_pct||0),borderColor:'#38BDF8',backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:0.4,fill:false,borderDash:[6,3]},
+      {label:'QQQ',data:hist.map(h=>h.qqq_return_pct||0),borderColor:'#6EE7B7',backgroundColor:'transparent',borderWidth:1.5,pointRadius:2,tension:0.4,fill:false,borderDash:[4,2]},
     ]},
     options:{
       responsive:true,maintainAspectRatio:false,
