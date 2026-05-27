@@ -11,6 +11,7 @@ PIN = os.environ.get('ETF_PIN', '2026')
 DATA_URL = 'https://jarvis.ankurjoshi-demo.com/etf-data'
 AGENT_API_KEY = os.environ.get('AGENT_API_KEY', '')  # for agent-to-agent calls
 _jobs = {}  # in-memory job store for async PDF analysis
+_latest_brief = {'analysis': None, 'timestamp': None, 'date': None}  # latest agent thinking
 
 def _agent_auth():
     """Accept either PIN session or X-API-Key header (for Amatya agent calls)."""
@@ -484,6 +485,19 @@ tr.totals td{background:#0d1117;font-weight:700;border-top:2px solid var(--br);b
 
 footer{border-top:1px solid var(--br);padding:20px 5%;text-align:center;color:#374151;font-size:11px;background:var(--cd2);margin-top:20px}
 footer a{color:#a78bfa;text-decoration:none}
+/* Brief toggle JS */
+.brief-card{background:linear-gradient(135deg,rgba(109,40,217,.12),rgba(79,70,229,.07));border:1px solid rgba(124,58,237,.3);border-radius:14px;padding:20px 24px;margin-bottom:20px;position:relative}
+.brief-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.brief-title{font-size:13px;font-weight:700;color:#E2E8F0;letter-spacing:.04em}
+.brief-ts{font-size:11px;color:#4B5563;margin-top:3px}
+.brief-upload-btn{font-size:11px;font-weight:600;color:#a78bfa;text-decoration:none;background:rgba(124,58,237,.12);padding:4px 12px;border-radius:20px;border:1px solid rgba(124,58,237,.25);white-space:nowrap}
+.brief-upload-btn:hover{background:rgba(124,58,237,.25);color:#c4b5fd}
+.brief-body{font-size:13px;color:#94A3B8;line-height:1.7;max-height:120px;overflow:hidden;transition:max-height .3s}
+.brief-body.expanded{max-height:1200px}
+.brief-expand{font-size:11px;color:#6B7280;cursor:pointer;margin-top:8px;text-align:center}
+.brief-expand:hover{color:#a78bfa}
+.brief-empty{text-align:center;font-size:13px;color:#374151;padding:12px;margin-bottom:20px}
+.brief-empty a{color:#a78bfa;text-decoration:none}
 
 /* MOBILE */
 @media(max-width:640px){
@@ -532,7 +546,26 @@ footer a{color:#a78bfa;text-decoration:none}
 {% set txns = s.get('transactions', []) %}
 {% set hist = s.get('performance_history', []) %}
 
-<div class="notice">Launched May 26, 2026</div>
+{# ── DAILY BRIEF SECTION ── #}
+{% if brief and brief.analysis %}
+<div class="brief-card">
+  <div class="brief-header">
+    <div>
+      <div class="brief-title">Agent Daily Brief</div>
+      <div class="brief-ts">Amatya Research · {{ brief.date }} · Updated {{ brief.timestamp }} ET</div>
+    </div>
+    <a href="/upload" class="brief-upload-btn">+ Upload New Brief</a>
+  </div>
+  <div class="brief-body" id="briefBody">{{ brief.analysis | replace('\n', '<br>') | safe }}</div>
+  <div class="brief-expand" onclick="toggleBrief()">Show more ↓</div>
+</div>
+{% else %}
+<div class="brief-empty">
+  <span>No daily brief yet — </span>
+  <a href="/upload">upload the Amatya brief</a>
+  <span> to see the agent's thinking here.</span>
+</div>
+{% endif %}
 
 <!-- NAV STATS -->
 <div class="grid4">
@@ -709,6 +742,19 @@ footer a{color:#a78bfa;text-decoration:none}
   American Frontier ETF · GFC LLC · AI-Managed · Account 668 · Auto-refresh 2 min · {{now}}<br>
   <a href="/">← Back to overview</a>
 </footer>
+<script>
+function toggleBrief() {
+  var b = document.getElementById('briefBody');
+  var e = b.nextElementSibling;
+  if(b.classList.contains('expanded')) {
+    b.classList.remove('expanded');
+    e.textContent = 'Show more ↓';
+  } else {
+    b.classList.add('expanded');
+    e.textContent = 'Show less ↑';
+  }
+}
+</script>
 </body></html>"""
 
 
@@ -760,7 +806,8 @@ def dashboard():
     if not s:
         return '<h2 style="font-family:sans-serif;padding:40px;color:#fff;background:#0a0a14;min-height:100vh">Data feed temporarily unavailable — try again shortly.</h2>', 503
     from datetime import datetime
-    return render_template_string(DASHBOARD_HTML, s=s, now=datetime.now().strftime('%Y-%m-%d %H:%M'))
+    return render_template_string(DASHBOARD_HTML, s=s, brief=_latest_brief,
+                                   now=datetime.now().strftime('%Y-%m-%d %H:%M'))
 
 ANTHROPIC_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 
@@ -973,6 +1020,10 @@ Be direct. Numbers first. Flag anything that changed vs last brief."""
                 timeout=90)
             analysis = r.json()['content'][0]['text'] if r.status_code == 200 else f'API error: {r.status_code}'
             _jobs[job_id] = {'status': 'done', 'analysis': analysis}
+            from datetime import datetime as _dt2
+            _latest_brief['analysis'] = analysis
+            _latest_brief['timestamp'] = _dt2.now().strftime('%Y-%m-%d %H:%M')
+            _latest_brief['date'] = _dt2.now().strftime('%b %d, %Y')
         except Exception as e:
             _jobs[job_id] = {'status': 'error', 'analysis': str(e)[:300]}
 
