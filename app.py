@@ -509,7 +509,9 @@ footer a{color:#a78bfa;text-decoration:none}
   <div class="nav-logo">AMERICAN <span>FRONTIER</span> ETF</div>
   <div class="nav-right">
     <span class="badge">{{ s.get('status','LIVE') }}</span>
-    <a href="/">← Overview</a>
+    <a href="/chat-page">💬 Chat</a>
+    <a href="/upload">📄 Upload Report</a>
+    <a href="/">Overview</a>
     <a href="/logout" style="color:var(--rd)!important">Sign out</a>
   </div>
 </nav>
@@ -750,6 +752,247 @@ def dashboard():
         return '<h2 style="font-family:sans-serif;padding:40px;color:#fff;background:#0a0a14;min-height:100vh">Data feed temporarily unavailable — try again shortly.</h2>', 503
     from datetime import datetime
     return render_template_string(DASHBOARD_HTML, s=s, now=datetime.now().strftime('%Y-%m-%d %H:%M'))
+
+ANTHROPIC_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
+
+# ── UPLOAD ROUTE — Amatya Research report upload → triggers rebalance analysis ──
+UPLOAD_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Upload Report — American Frontier ETF</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0F0720;color:#F9FAFB;font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.box{background:#1A0F35;border:1px solid #2D1B69;border-radius:20px;padding:48px 40px;width:100%;max-width:520px;text-align:center}
+.logo{font-size:12px;font-weight:800;letter-spacing:.08em;color:#fff;margin-bottom:4px}
+.logo span{color:#8B5CF6}
+.sub{color:#6B7280;font-size:11px;margin-bottom:36px}
+h2{font-size:20px;font-weight:700;margin-bottom:8px}
+p{color:#A78BFA;font-size:13px;margin-bottom:28px;line-height:1.6}
+.drop{border:2px dashed #2D1B69;border-radius:12px;padding:36px 20px;margin-bottom:20px;cursor:pointer;transition:border-color .2s}
+.drop:hover{border-color:#8B5CF6}
+.drop-icon{font-size:36px;margin-bottom:12px}
+.drop p{color:#6B7280;font-size:13px;margin:0}
+input[type=file]{display:none}
+button{width:100%;padding:14px;background:#6D28D9;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;font-family:'Inter',sans-serif}
+button:hover{background:#8B5CF6}
+.result{background:#0d0b1e;border:1px solid #2D1B69;border-radius:10px;padding:16px;margin-top:20px;font-size:13px;color:#A78BFA;text-align:left;white-space:pre-wrap;display:none;max-height:300px;overflow-y:auto}
+.back{display:block;margin-top:20px;color:#4B5563;font-size:12px;text-decoration:none}
+.back:hover{color:#A78BFA}
+</style></head><body>
+<div class="box">
+  <div class="logo">AMERICAN <span>FRONTIER</span> ETF</div>
+  <div class="sub">Agent Research Uploader</div>
+  <h2>Upload Monthly Report</h2>
+  <p>Upload a new Amatya Research PDF. The agent will analyze it, score all holdings, and generate a rebalancing recommendation.</p>
+  <form id="uploadForm">
+    <div class="drop" onclick="document.getElementById('pdfInput').click()">
+      <div class="drop-icon">📄</div>
+      <p id="fileName">Click to select Amatya Research PDF</p>
+    </div>
+    <input type="file" id="pdfInput" accept=".pdf,.txt,.md" onchange="document.getElementById('fileName').textContent=this.files[0].name">
+    <button type="submit">Analyze & Generate Rebalancing Plan</button>
+  </form>
+  <div class="result" id="result"></div>
+  <a href="/dashboard" class="back">← Back to portfolio</a>
+</div>
+<script>
+document.getElementById('uploadForm').onsubmit = async function(e) {
+  e.preventDefault();
+  const file = document.getElementById('pdfInput').files[0];
+  if(!file){alert('Please select a file');return;}
+  const btn = this.querySelector('button');
+  btn.textContent = 'Analyzing...'; btn.disabled = true;
+  const fd = new FormData(); fd.append('report', file);
+  try {
+    const r = await fetch('/upload-report', {method:'POST', body:fd});
+    const d = await r.json();
+    const res = document.getElementById('result');
+    res.style.display = 'block';
+    res.textContent = d.analysis || d.error || JSON.stringify(d,null,2);
+  } catch(err) {
+    document.getElementById('result').style.display='block';
+    document.getElementById('result').textContent='Error: '+err.message;
+  }
+  btn.textContent = 'Analyze & Generate Rebalancing Plan'; btn.disabled = false;
+};
+</script>
+</body></html>"""
+
+# ── CHAT ROUTE — Talk to the ETF agent ────────────────────────────────────────
+CHAT_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent Chat — American Frontier ETF</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0F0720;color:#F9FAFB;font-family:'Inter',sans-serif;height:100vh;display:flex;flex-direction:column}
+.topbar{background:rgba(15,7,32,.97);border-bottom:1px solid #2D1B69;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo{font-size:13px;font-weight:800;letter-spacing:.06em}
+.logo span{color:#8B5CF6}
+.topbar a{color:#6B7280;font-size:12px;text-decoration:none}
+.topbar a:hover{color:#A78BFA}
+.messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:80%;padding:12px 16px;border-radius:14px;font-size:14px;line-height:1.6}
+.msg.user{background:#6D28D9;color:#fff;align-self:flex-end;border-radius:14px 14px 4px 14px}
+.msg.agent{background:#1A0F35;color:#E2E8F0;align-self:flex-start;border-radius:14px 14px 14px 4px;border:1px solid #2D1B69}
+.msg.agent strong{color:#A78BFA}
+.typing{color:#6B7280;font-size:12px;padding:4px 16px;align-self:flex-start}
+.input-bar{padding:16px;background:rgba(15,7,32,.97);border-top:1px solid #2D1B69;display:flex;gap:10px;flex-shrink:0}
+.input-bar input{flex:1;background:#1A0F35;border:1px solid #2D1B69;border-radius:12px;padding:12px 16px;color:#F9FAFB;font-size:14px;font-family:'Inter',sans-serif;outline:none}
+.input-bar input:focus{border-color:#6D28D9}
+.input-bar input::placeholder{color:#4B3A7A}
+.input-bar button{background:#6D28D9;color:#fff;border:none;border-radius:12px;padding:12px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s}
+.input-bar button:hover{background:#8B5CF6}
+.suggestion{display:inline-block;background:rgba(109,40,217,.15);border:1px solid rgba(109,40,217,.3);color:#A78BFA;font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;margin:4px;transition:background .15s}
+.suggestion:hover{background:rgba(109,40,217,.3)}
+</style></head><body>
+<div class="topbar">
+  <div class="logo">AMERICAN <span>FRONTIER</span> ETF &nbsp;·&nbsp; Agent Chat</div>
+  <a href="/dashboard">← Portfolio</a>
+</div>
+<div class="messages" id="messages">
+  <div class="msg agent"><strong>ETF Agent</strong><br>Hi Ankur. I'm monitoring the American Frontier ETF. Ask me anything — positions, alpha layer, ASTS spread, LUNR, rebalancing. What do you need?</div>
+  <div style="text-align:center;padding:8px 0">
+    <span class="suggestion" onclick="ask('What is the current ETF status?')">ETF status</span>
+    <span class="suggestion" onclick="ask('How is the ASTS spread doing?')">ASTS spread</span>
+    <span class="suggestion" onclick="ask('Should I be worried about LUNR?')">LUNR concern</span>
+    <span class="suggestion" onclick="ask('What is the alpha layer conviction level?')">Alpha conviction</span>
+  </div>
+</div>
+<div class="input-bar">
+  <input type="text" id="msg" placeholder="Ask the agent..." onkeydown="if(event.key==='Enter')send()">
+  <button onclick="send()">Send</button>
+</div>
+<script>
+const etfData = {{ etf_json | safe }};
+function ask(q){document.getElementById('msg').value=q;send();}
+async function send(){
+  const input=document.getElementById('msg');
+  const q=input.value.trim();
+  if(!q)return;
+  input.value='';
+  const msgs=document.getElementById('messages');
+  msgs.innerHTML+=`<div class="msg user">${q}</div>`;
+  msgs.innerHTML+='<div class="typing" id="typing">Agent is thinking...</div>';
+  msgs.scrollTop=msgs.scrollHeight;
+  try{
+    const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q})});
+    const d=await r.json();
+    document.getElementById('typing')?.remove();
+    msgs.innerHTML+=`<div class="msg agent"><strong>ETF Agent</strong><br>${(d.reply||d.error||'No response').replace(/\\n/g,'<br>')}</div>`;
+  }catch(e){
+    document.getElementById('typing')?.remove();
+    msgs.innerHTML+=`<div class="msg agent">Error: ${e.message}</div>`;
+  }
+  msgs.scrollTop=msgs.scrollHeight;
+}
+</script>
+</body></html>"""
+
+
+@app.route('/upload', methods=['GET'])
+def upload_page():
+    if not session.get('auth'):
+        return redirect('/login')
+    return render_template_string(UPLOAD_HTML)
+
+
+@app.route('/upload-report', methods=['POST'])
+def upload_report():
+    if not session.get('auth'):
+        return req_lib.jsonify({'error': 'unauthorized'}), 401
+    if not ANTHROPIC_KEY:
+        return req_lib.jsonify({'error': 'Claude API not configured'}), 500
+    from flask import jsonify
+    file = request.files.get('report')
+    if not file:
+        return jsonify({'error': 'No file uploaded'}), 400
+
+    content = file.read().decode('utf-8', errors='ignore')[:8000]
+    etf_data = get_etf_data()
+    positions = etf_data.get('positions', [])
+    pos_summary = ', '.join(f"{p['ticker']} ({p.get('pnl_pct',0):+.1f}%)" for p in positions)
+
+    prompt = f"""You are the GFC American Frontier ETF agent analyzing a new monthly Amatya Research report.
+
+CURRENT PORTFOLIO: {pos_summary}
+CURRENT NAV: ${etf_data.get('nav', 0):,.2f} | Return: {etf_data.get('performance',{}).get('total_return_pct',0):+.2f}%
+
+NEW AMATYA RESEARCH REPORT:
+{content}
+
+Analyze this report vs current holdings. Provide:
+1. CHANGES NEEDED: Any positions to add, remove, or reweight?
+2. CONVICTION CHANGES: Any names where conviction has increased or decreased?
+3. NEW OPPORTUNITIES: Any new names that should replace existing holdings?
+4. ALPHA LAYER: Any new catalyst plays worth pursuing?
+5. VERDICT: Hold as-is, minor rebalance, or major rebalance?
+
+Be specific. Reference actual tickers and percentages."""
+
+    try:
+        r = req_lib.post('https://api.anthropic.com/v1/messages',
+            headers={'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json'},
+            json={'model': 'claude-sonnet-4-6', 'max_tokens': 1500, 'messages': [{'role': 'user', 'content': prompt}]},
+            timeout=30)
+        analysis = r.json()['content'][0]['text'] if r.status_code == 200 else f'API error: {r.status_code}'
+        return jsonify({'analysis': analysis, 'status': 'ok'})
+    except Exception as e:
+        return jsonify({'error': str(e)[:200]}), 500
+
+
+@app.route('/chat-page')
+def chat_page():
+    if not session.get('auth'):
+        return redirect('/login')
+    etf = get_etf_data()
+    from flask import jsonify
+    import json as _json
+    return render_template_string(CHAT_HTML, etf_json=_json.dumps(etf))
+
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    if not session.get('auth'):
+        from flask import jsonify
+        return jsonify({'error': 'unauthorized'}), 401
+    from flask import jsonify
+    if not ANTHROPIC_KEY:
+        return jsonify({'error': 'Claude API not configured'}), 500
+
+    message = (request.json or {}).get('message', '')
+    etf = get_etf_data()
+    perf = etf.get('performance', {})
+    positions = etf.get('positions', [])
+    alpha = etf.get('alpha_layer', {}).get('positions', [])
+
+    pos_lines = '\n'.join(f"  {p['ticker']}: {p.get('quantity',0)} shares @ ${p.get('avg_cost',0):.2f}, current ${p.get('current_price',0):.2f}, P&L {p.get('pnl_pct',0):+.1f}%" for p in positions)
+    alpha_lines = '\n'.join(f"  {p['ticker']} {p.get('strike_display',p.get('asset_type',''))} cost=${p.get('cost',0):.0f} MTM=${p.get('mtm',0):.0f} P&L={p.get('pnl_pct',0):+.1f}%" for p in alpha)
+
+    system = f"""You are the GFC American Frontier ETF agent. You manage this portfolio autonomously.
+
+ETF STATUS: NAV=${etf.get('nav',0):,.2f} | Return={perf.get('total_return_pct',0):+.2f}% | Inception May 26 2026 | 30-day review Jun 25
+
+BASE ETF POSITIONS:
+{pos_lines}
+
+ALPHA LAYER:
+{alpha_lines}
+
+MANDATE: Amatya Research 3-pillar thematic ETF. Base = 2-5yr hold, no stop loss. Alpha = options/spreads, thesis-break exits only. Target 50% CAGR.
+
+You speak directly to Ankur (CEO/CIO). Be sharp, direct, no fluff. Numbers-first. Flag risks. Surface what he didn't ask."""
+
+    try:
+        r = req_lib.post('https://api.anthropic.com/v1/messages',
+            headers={'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json'},
+            json={'model': 'claude-haiku-4-5-20251001', 'max_tokens': 400,
+                  'system': system, 'messages': [{'role': 'user', 'content': message}]},
+            timeout=20)
+        reply = r.json()['content'][0]['text'] if r.status_code == 200 else 'API unavailable'
+        return jsonify({'reply': reply})
+    except Exception as e:
+        return jsonify({'error': str(e)[:200]}), 500
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
