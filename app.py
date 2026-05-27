@@ -813,7 +813,8 @@ document.getElementById('uploadForm').onsubmit = async function(e) {
   const fd = new FormData(); fd.append('report', file);
   try {
     const r = await fetch('/upload-report', {method:'POST', body:fd});
-    const d = await r.json();
+    let d;
+    try { d = await r.json(); } catch(e) { d = {error: 'Server error ('+r.status+'): '+e.message}; }
     const res = document.getElementById('result');
     res.style.display = 'block';
     res.textContent = d.analysis || d.error || JSON.stringify(d,null,2);
@@ -957,9 +958,9 @@ Be direct. Numbers first. Flag anything that changed vs last brief."""
                 if readable / total < 0.3 or len(text_content.strip()) < 200:
                     # Image-based PDF — render pages and send as vision
                     image_messages = []
-                    for page_num in range(min(len(doc), 8)):  # max 8 pages
+                    for page_num in range(min(len(doc), 5)):  # max 5 pages
                         page = doc[page_num]
-                        mat = fitz.Matrix(1.5, 1.5)  # 1.5x zoom for readability
+                        mat = fitz.Matrix(1.2, 1.2)  # 1.2x zoom, faster render
                         pix = page.get_pixmap(matrix=mat)
                         img_bytes = pix.tobytes('png')
                         b64 = base64.standard_b64encode(img_bytes).decode()
