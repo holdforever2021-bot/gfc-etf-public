@@ -869,6 +869,9 @@ def dashboard():
     if not s:
         return '<h2 style="font-family:sans-serif;padding:40px;color:#fff;background:#0a0a14;min-height:100vh">Data feed temporarily unavailable — try again shortly.</h2>', 503
     from datetime import datetime
+    # Seed brief from DO state if Render memory lost it (deploy/restart)
+    if not _latest_brief.get('analysis') and s.get('daily_brief',{}).get('analysis'):
+        _latest_brief.update(s['daily_brief'])
     return render_template_string(DASHBOARD_HTML, s=s, brief=_latest_brief,
                                    now=datetime.now().strftime('%Y-%m-%d %H:%M'))
 
@@ -1095,16 +1098,30 @@ Max 2-3 items in each array. One sentence per field. No markdown."""
             analysis = r.json()['content'][0]['text'] if r.status_code == 200 else f'API error: {r.status_code}'
             _jobs[job_id] = {'status': 'done', 'analysis': analysis}
             from datetime import datetime as _dt2
-            _latest_brief['analysis'] = analysis
-            _latest_brief['timestamp'] = _dt2.now().strftime('%Y-%m-%d %H:%M')
-            _latest_brief['date'] = _dt2.now().strftime('%b %d, %Y')
-            # Parse JSON for structured display
             import re as _re, json as _json
             try:
                 m = _re.search(r'\{.*\}', analysis, _re.DOTALL)
-                _latest_brief['parsed'] = _json.loads(m.group()) if m else None
+                parsed = _json.loads(m.group()) if m else None
             except Exception:
-                _latest_brief['parsed'] = None
+                parsed = None
+
+            brief_obj = {
+                'analysis': analysis, 'parsed': parsed,
+                'timestamp': _dt2.now().strftime('%Y-%m-%d %H:%M'),
+                'date': _dt2.now().strftime('%b %d, %Y')
+            }
+            _latest_brief.update(brief_obj)
+
+            # Also seed _latest_brief from DO on startup if available
+            # Persist: push brief back into DO state so it survives Render deploys
+            try:
+                do_state = req_lib.get('https://jarvis.ankurjoshi-demo.com/etf-data', timeout=8).json()
+                do_state['daily_brief'] = brief_obj
+                req_lib.post('https://jarvis.ankurjoshi-demo.com/etf-write',
+                    headers={'X-Write-Token': os.environ.get('DO_WRITE_TOKEN','')},
+                    json=do_state, timeout=10)
+            except Exception:
+                pass  # best-effort
         except Exception as e:
             _jobs[job_id] = {'status': 'error', 'analysis': str(e)[:300]}
 
