@@ -779,7 +779,7 @@ window.addEventListener('DOMContentLoaded',function(){
     {% set mval=p.get('market_value',p.current_price*p.quantity) %}
     {% set ns.tc=ns.tc+cost %}{% set ns.tv=ns.tv+mval %}{% set ns.tp=ns.tp+p.get('unrealized_pnl',0) %}
     <tr>
-      <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:{%- set pcols={1:'#2563EB',2:'#059669',3:'#7C3AED'} %}{%- set pmap={'OUST':3,'NOW':3,'TMDX':3,'RGTI':2,'NOK':1,'ASTS':1,'FLY':2,'LUNR':2,'IPX':1,'USAR':1} %}{{ pcols.get(pmap.get(p.ticker,1),'#64748B') }};flex-shrink:0"></span><strong>{{p.ticker}}</strong></span></td>
+      <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:{% if p.ticker in ('NOK','ASTS','IPX','USAR') %}#2563EB{% elif p.ticker in ('FLY','LUNR','RGTI') %}#059669{% else %}#7C3AED{% endif %};flex-shrink:0"></span><strong>{{p.ticker}}</strong></span></td>
       <td style="color:var(--mt)">{{p.quantity}}</td>
       <td style="color:var(--mt)">${{'%.2f'|format(p.avg_cost)}}</td>
       <td>${{'%.2f'|format(p.current_price)}}</td>
@@ -814,7 +814,7 @@ window.addEventListener('DOMContentLoaded',function(){
     {%- set mtm=p.get('mtm',p.get('cost',0)) %}{%- set pnl=p.get('pnl',0) %}{%- set pct=p.get('pnl_pct',0) %}
     {%- set ns_a.tc=ns_a.tc+p.get('cost',0) %}{%- set ns_a.tv=ns_a.tv+mtm %}{%- set ns_a.tp=ns_a.tp+pnl %}
     <tr>
-      <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:{%- set pcols={1:'#2563EB',2:'#059669',3:'#7C3AED'} %}{%- set pmap={'OUST':3,'NOW':3,'TMDX':3,'RGTI':2,'NOK':1,'ASTS':1,'FLY':2,'LUNR':2,'IPX':1,'USAR':1} %}{{ pcols.get(pmap.get(p.ticker,1),'#64748B') }};flex-shrink:0"></span><strong>{{p.ticker}}</strong></span></td>
+      <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:{% if p.ticker in ('NOK','ASTS','IPX','USAR') %}#2563EB{% elif p.ticker in ('FLY','LUNR','RGTI') %}#059669{% else %}#7C3AED{% endif %};flex-shrink:0"></span><strong>{{p.ticker}}</strong></span></td>
       <td style="color:var(--mt)">1</td>
       <td style="color:var(--mt)">${{'%.2f'|format(p.get('cost',0))}}</td>
       <td>${{'%.2f'|format(mtm)}}</td>
