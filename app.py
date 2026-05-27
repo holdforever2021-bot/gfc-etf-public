@@ -634,7 +634,7 @@ footer a{color:#a78bfa;text-decoration:none}
 <div class="grid4">
   <div class="scard">
     <div class="sl">Total NAV</div>
-    <div class="sv">${{ '{:,.2f}'.format(last.get('agent_etf_nav', s.get('nav',0))) }}</div>
+    <div class="sv">${{ '%.2f'|format(last.get('agent_etf_nav', s.get('nav',0))) }}</div>
     <div class="ss">Inception ${{ '%.2f'|format(perf.get('inception_nav',2000)) }} · May 26 2026</div>
   </div>
   <div class="scard">
@@ -664,14 +664,18 @@ footer a{color:#a78bfa;text-decoration:none}
       <div style="font-size:16px;font-weight:700;color:#E2E8F0">Growth of $2,000 · May 26, 2026</div>
       <div style="font-size:11px;color:#4B5563;margin-top:3px">Live portfolio · Account 668 · Updated {{ now }} ET</div>
     </div>
-    <div style="display:flex;gap:20px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600">
-        <div style="width:24px;height:3px;background:#A78BFA;border-radius:2px"></div>
-        Agent ETF: <strong style="color:#A78BFA">${{ '{:,.2f}'.format(last.get('agent_etf_nav',2000)) }} ({{ '%+.2f'|format(last.get('agent_return_pct',0)) }}%)</strong>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600">
+        <div style="width:22px;height:3px;background:#A78BFA;border-radius:2px"></div>
+        Agent ETF: <strong style="color:#A78BFA">${{ '%.2f'|format(last.get('agent_etf_nav',2000)) }} ({{ '%+.2f'|format(last.get('agent_return_pct',0)) }}%)</strong>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600">
-        <div style="width:20px;border-top:2px dashed #4B5563"></div>
-        QQQ: <strong style="color:#6B7280">${{ '{:,.2f}'.format(last.get('qqq_nav',2000)) }} ({{ '%+.2f'|format(last.get('qqq_return_pct',0)) }}%)</strong>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600">
+        <div style="width:22px;border-top:2px dashed #38BDF8"></div>
+        Base ETF: <strong style="color:#38BDF8">${{ '%.2f'|format(last.get('base_etf_nav',2000)) }} ({{ '%+.2f'|format(last.get('base_return_pct',0)) }}%)</strong>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600">
+        <div style="width:22px;border-top:2px dashed #6B7280"></div>
+        QQQ: <strong style="color:#6B7280">${{ '%.2f'|format(last.get('qqq_nav',2000)) }} ({{ '%+.2f'|format(last.get('qqq_return_pct',0)) }}%)</strong>
       </div>
     </div>
   </div>
