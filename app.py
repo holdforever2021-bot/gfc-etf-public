@@ -654,46 +654,107 @@ footer a{color:#a78bfa;text-decoration:none}
   </div>
 </div>
 
-<!-- LIVE PERFORMANCE CHART -->
-<div class="card">
-  <div class="card-header">
-    <div class="card-title">Live Performance vs Benchmarks</div>
-    <div class="card-sub">Agent ETF · Base ETF · QQQ · Since inception May 26</div>
+<!-- LIVE PERFORMANCE CHART — dollar value, same style as backtest -->
+{% set last = hist[-1] if hist else {} %}
+<div class="card" style="position:relative;overflow:hidden">
+  <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#8B5CF6,#C4B5FD,#8B5CF6,transparent)"></div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="font-size:16px;font-weight:700;color:#E2E8F0">Growth of $2,000 · May 26, 2026</div>
+      <div style="font-size:11px;color:#4B5563;margin-top:3px">Live portfolio · Account 668 · Updated {{ now }} ET</div>
+    </div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600">
+        <div style="width:24px;height:3px;background:#A78BFA;border-radius:2px"></div>
+        Agent ETF: <strong style="color:#A78BFA">${{ '{:,.2f}'.format(last.get('agent_etf_nav',2000)) }} ({{ '%+.2f'|format(last.get('agent_return_pct',0)) }}%)</strong>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600">
+        <div style="width:20px;border-top:2px dashed #4B5563"></div>
+        QQQ: <strong style="color:#6B7280">${{ '{:,.2f}'.format(last.get('qqq_nav',2000)) }} ({{ '%+.2f'|format(last.get('qqq_return_pct',0)) }}%)</strong>
+      </div>
+    </div>
   </div>
   {% if hist|length < 2 %}
-  <div style="text-align:center;padding:48px 0;color:#374151;font-size:13px">
-    Performance chart builds from Day 2 — first data point recorded today
-  </div>
+  <div style="text-align:center;padding:40px;color:#374151;font-size:13px">Chart builds from Day 2</div>
   {% endif %}
-  <div class="chart-container">
-    <canvas id="liveChart"></canvas>
+  <canvas id="liveChart" style="width:100%;height:260px;display:block"></canvas>
+</div>
+
+<!-- ALLOCATION CHARTS -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+  <div class="card">
+    <div style="font-size:12px;font-weight:700;color:#E2E8F0;margin-bottom:4px">Portfolio Allocation by Pillar</div>
+    <div style="font-size:10px;color:#4B5563;margin-bottom:14px">Actual positions · Account 668</div>
+    <canvas id="pillarLive" style="width:100%;height:180px;display:block"></canvas>
+  </div>
+  <div class="card">
+    <div style="font-size:12px;font-weight:700;color:#E2E8F0;margin-bottom:4px">Allocation by Risk Tier</div>
+    <div style="font-size:10px;color:#4B5563;margin-bottom:14px">ANCHOR · GROWTH · SPECULATIVE</div>
+    <canvas id="tierLive" style="width:100%;height:180px;display:block"></canvas>
   </div>
 </div>
 
 <script>
-(function(){
+window.addEventListener('DOMContentLoaded',function(){
   var hist = {{ hist | tojson | safe }};
-  if(!hist || hist.length < 2) return;
-  new Chart(document.getElementById('liveChart'),{
-    type:'line',
-    data:{labels:hist.map(h=>h.date),datasets:[
-      {label:'Agent ETF (+ Alpha)',data:hist.map(h=>h.agent_return_pct||0),borderColor:'#A78BFA',backgroundColor:'rgba(167,139,250,.08)',borderWidth:2.5,pointRadius:3,tension:0.4,fill:true},
-      {label:'Base ETF',data:hist.map(h=>h.base_return_pct||0),borderColor:'#38BDF8',backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:0.4,fill:false,borderDash:[6,3]},
-      {label:'QQQ',data:hist.map(h=>h.qqq_return_pct||0),borderColor:'#6EE7B7',backgroundColor:'transparent',borderWidth:1.5,pointRadius:2,tension:0.4,fill:false,borderDash:[4,2]},
-    ]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
-      plugins:{legend:{position:'top',labels:{color:'#9CA3AF',font:{size:11},usePointStyle:true,padding:16}},
-        tooltip:{backgroundColor:'#1F2937',borderColor:'#374151',borderWidth:1,padding:12,
-          callbacks:{label:c=>' '+c.dataset.label+': '+(c.parsed.y>=0?'+':'')+c.parsed.y.toFixed(2)+'%'}}},
-      scales:{
-        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4B5563',font:{size:11}}},
-        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4B5563',font:{size:11},callback:v=>(v>=0?'+':'')+v.toFixed(1)+'%'}}
+
+  // Main NAV chart — dollar values, backtest style
+  if(hist && hist.length > 0){
+    new Chart(document.getElementById('liveChart'),{
+      type:'line',
+      data:{labels:hist.map(h=>h.date),datasets:[
+        {label:'Agent ETF',data:hist.map(h=>h.agent_etf_nav||2000),
+         borderColor:'#A78BFA',backgroundColor:'rgba(167,139,250,.12)',borderWidth:2.5,pointRadius:hist.length<5?4:2,tension:0.4,fill:true},
+        {label:'QQQ ($2K)',data:hist.map(h=>h.qqq_nav||2000),
+         borderColor:'#4B5563',backgroundColor:'transparent',borderWidth:1.5,pointRadius:hist.length<5?3:1,tension:0.4,fill:false,borderDash:[6,3]},
+      ]},
+      options:{
+        responsive:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{legend:{display:false},
+          tooltip:{backgroundColor:'#1F2937',borderColor:'#374151',borderWidth:1,padding:12,
+            callbacks:{label:c=>' '+c.dataset.label+': $'+c.parsed.y.toLocaleString('en',{maximumFractionDigits:2})}}},
+        scales:{
+          x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4B5563',font:{size:11}}},
+          y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4B5563',font:{size:11},
+            callback:v=>'$'+v.toLocaleString('en',{maximumFractionDigits:0})}}
+        }
       }
-    }
+    });
+  }
+
+  // Pillar doughnut — actual position values
+  var positions = {{ s.get('positions',[]) | tojson | safe }};
+  var pillarMap = {NOK:1,ASTS:1,IPX:1,USAR:1,FLY:2,LUNR:2,RGTI:2,NOW:3,TMDX:3,OUST:3};
+  var pillarVals = [0,0,0];
+  positions.forEach(function(p){
+    var pil = pillarMap[p.ticker];
+    if(pil) pillarVals[pil-1] += p.market_value || (p.current_price * p.quantity) || 0;
   });
-})();
+  new Chart(document.getElementById('pillarLive'),{
+    type:'doughnut',
+    data:{labels:['P1 · Sovereign','P2 · Space','P3 · Physical AI'],
+      datasets:[{data:pillarVals.map(v=>Math.round(v)),
+        backgroundColor:['#2563EB','#059669','#7C3AED'],borderColor:'#0F172A',borderWidth:3,hoverOffset:6}]},
+    options:{responsive:false,plugins:{legend:{position:'bottom',labels:{color:'#9CA3AF',font:{size:11},padding:14,usePointStyle:true}}}}
+  });
+
+  // Tier bar — actual values
+  var tierMap = {NOW:'anchor',TMDX:'anchor',LUNR:'anchor',FLY:'anchor',ASTS:'growth',USAR:'growth',IPX:'growth',NOK:'growth',OUST:'growth',RGTI:'speculative'};
+  var tierVals = {anchor:0,growth:0,speculative:0};
+  positions.forEach(function(p){ var t=tierMap[p.ticker]; if(t) tierVals[t]+=(p.market_value||(p.current_price*p.quantity)||0); });
+  new Chart(document.getElementById('tierLive'),{
+    type:'bar',
+    data:{labels:['ANCHOR','GROWTH','SPECULATIVE'],
+      datasets:[{data:[Math.round(tierVals.anchor),Math.round(tierVals.growth),Math.round(tierVals.speculative)],
+        backgroundColor:['rgba(124,58,237,.7)','rgba(16,185,129,.7)','rgba(245,158,11,.7)'],
+        borderColor:['#7C3AED','#10B981','#F59E0B'],borderWidth:2,borderRadius:6}]},
+    options:{responsive:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:c=>'$'+c.parsed.y.toLocaleString('en',{maximumFractionDigits:0})}}},
+      scales:{x:{grid:{display:false},ticks:{color:'#9CA3AF',font:{size:11}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4B5563',font:{size:11},callback:v=>'$'+v.toLocaleString('en',{maximumFractionDigits:0})}}}}
+  });
+});
 </script>
 
 <!-- POSITIONS -->
