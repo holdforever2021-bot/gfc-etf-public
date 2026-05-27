@@ -630,6 +630,8 @@ footer a{color:#a78bfa;text-decoration:none}
 </div>
 {% endif %}
 
+{% set hist = s.get('performance_history', []) %}
+{% set last = hist[-1] if hist else {} %}
 <!-- NAV STATS -->
 <div class="grid4">
   <div class="scard">
