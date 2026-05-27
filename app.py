@@ -789,16 +789,16 @@ button:hover{background:#8B5CF6}
 </style></head><body>
 <div class="box">
   <div class="logo">AMERICAN <span>FRONTIER</span> ETF</div>
-  <div class="sub">Agent Research Uploader</div>
-  <h2>Upload Monthly Report</h2>
-  <p>Upload a new Amatya Research PDF. The agent will analyze it, score all holdings, and generate a rebalancing recommendation.</p>
+  <div class="sub">Amatya Research Brief</div>
+  <h2>Upload Brief</h2>
+  <p>Upload the Amatya Research daily brief. The agent will analyze all holdings, signals, and catalysts.</p>
   <form id="uploadForm">
     <div class="drop" onclick="document.getElementById('pdfInput').click()">
       <div class="drop-icon">📄</div>
       <p id="fileName">Click to select Amatya Research PDF</p>
     </div>
     <input type="file" id="pdfInput" accept=".pdf,.txt,.md" onchange="document.getElementById('fileName').textContent=this.files[0].name">
-    <button type="submit">Analyze & Generate Rebalancing Plan</button>
+    <button type="submit">Analyze Brief</button>
   </form>
   <div class="result" id="result"></div>
   <a href="/dashboard" class="back">← Back to portfolio</a>
@@ -821,7 +821,7 @@ document.getElementById('uploadForm').onsubmit = async function(e) {
     document.getElementById('result').style.display='block';
     document.getElementById('result').textContent='Error: '+err.message;
   }
-  btn.textContent = 'Analyze & Generate Rebalancing Plan'; btn.disabled = false;
+  btn.textContent = 'Analyze Brief'; btn.disabled = false;
 };
 </script>
 </body></html>"""
@@ -915,37 +915,81 @@ def upload_report():
     if not file:
         return jsonify({'error': 'No file uploaded'}), 400
 
-    content = file.read().decode('utf-8', errors='ignore')[:8000]
+    file_bytes = file.read()
+    filename = file.filename or ''
     etf_data = get_etf_data()
     positions = etf_data.get('positions', [])
     pos_summary = ', '.join(f"{p['ticker']} ({p.get('pnl_pct',0):+.1f}%)" for p in positions)
 
-    prompt = f"""You are the GFC American Frontier ETF agent analyzing a new monthly Amatya Research report.
+    system_prompt = f"""You are the GFC American Frontier ETF analyst reading the Amatya Research daily brief.
 
 CURRENT PORTFOLIO: {pos_summary}
 CURRENT NAV: ${etf_data.get('nav', 0):,.2f} | Return: {etf_data.get('performance',{}).get('total_return_pct',0):+.2f}%
 
-NEW AMATYA RESEARCH REPORT:
-{content}
+Analyze this brief vs current holdings. Provide:
+1. SIGNALS TODAY: Key buy/sell/hold signals per ticker with rationale
+2. ALPHA OPPORTUNITIES: Any catalyst plays worth flagging (options, sizing changes)
+3. RISK FLAGS: Any CAUTION or deteriorating thesis names
+4. ACTION ITEMS: Specific, numbered — what needs attention today
+5. HOLD LIST: Names where thesis is intact, no action needed
 
-Analyze this report vs current holdings. Provide:
-1. CHANGES NEEDED: Any positions to add, remove, or reweight?
-2. CONVICTION CHANGES: Any names where conviction has increased or decreased?
-3. NEW OPPORTUNITIES: Any new names that should replace existing holdings?
-4. ALPHA LAYER: Any new catalyst plays worth pursuing?
-5. VERDICT: Hold as-is, minor rebalance, or major rebalance?
-
-Be specific. Reference actual tickers and percentages."""
+Be direct. Numbers first. Flag anything that changed vs last brief."""
 
     try:
+        # Try to extract text from PDF first
+        messages = []
+        text_content = ''
+
+        if filename.endswith('.pdf') or file_bytes[:4] == b'%PDF':
+            try:
+                import fitz  # PyMuPDF
+                import base64, io
+                doc = fitz.open(stream=file_bytes, filetype='pdf')
+
+                # Try text extraction first
+                for page in doc:
+                    text_content += page.get_text()
+
+                # If text is mostly garbage (image-based PDF), use vision
+                readable = sum(1 for c in text_content if c.isalpha())
+                total = max(len(text_content), 1)
+
+                if readable / total < 0.3 or len(text_content.strip()) < 200:
+                    # Image-based PDF — render pages and send as vision
+                    image_messages = []
+                    for page_num in range(min(len(doc), 8)):  # max 8 pages
+                        page = doc[page_num]
+                        mat = fitz.Matrix(1.5, 1.5)  # 1.5x zoom for readability
+                        pix = page.get_pixmap(matrix=mat)
+                        img_bytes = pix.tobytes('png')
+                        b64 = base64.standard_b64encode(img_bytes).decode()
+                        image_messages.append({
+                            'type': 'image',
+                            'source': {'type': 'base64', 'media_type': 'image/png', 'data': b64}
+                        })
+                    image_messages.append({'type': 'text', 'text': 'This is the Amatya Research daily brief. Analyze it per the system instructions.'})
+                    messages = [{'role': 'user', 'content': image_messages}]
+                else:
+                    messages = [{'role': 'user', 'content': text_content[:6000]}]
+                doc.close()
+            except ImportError:
+                # PyMuPDF not available, fall back to raw text
+                text_content = file_bytes.decode('utf-8', errors='ignore')[:6000]
+                messages = [{'role': 'user', 'content': text_content}]
+        else:
+            # Plain text or other format
+            text_content = file_bytes.decode('utf-8', errors='ignore')[:6000]
+            messages = [{'role': 'user', 'content': text_content}]
+
         r = req_lib.post('https://api.anthropic.com/v1/messages',
             headers={'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json'},
-            json={'model': 'claude-sonnet-4-6', 'max_tokens': 1500, 'messages': [{'role': 'user', 'content': prompt}]},
-            timeout=30)
-        analysis = r.json()['content'][0]['text'] if r.status_code == 200 else f'API error: {r.status_code}'
+            json={'model': 'claude-sonnet-4-6', 'max_tokens': 1500,
+                  'system': system_prompt, 'messages': messages},
+            timeout=60)
+        analysis = r.json()['content'][0]['text'] if r.status_code == 200 else f'API error: {r.status_code} — {r.text[:200]}'
         return jsonify({'analysis': analysis, 'status': 'ok'})
     except Exception as e:
-        return jsonify({'error': str(e)[:200]}), 500
+        return jsonify({'error': str(e)[:300]}), 500
 
 
 @app.route('/chat-page')
