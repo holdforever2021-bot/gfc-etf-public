@@ -10,6 +10,7 @@ app.secret_key = os.environ.get('SECRET_KEY', 'gfc-etf-2026-frontier')
 PIN = os.environ.get('ETF_PIN', '2026')
 DATA_URL = 'https://jarvis.ankurjoshi-demo.com/etf-data'
 AGENT_API_KEY = os.environ.get('AGENT_API_KEY', '')  # for agent-to-agent calls
+_jobs = {}  # in-memory job store for async PDF analysis
 
 def _agent_auth():
     """Accept either PIN session or X-API-Key header (for Amatya agent calls)."""
@@ -817,7 +818,17 @@ document.getElementById('uploadForm').onsubmit = async function(e) {
     try { d = await r.json(); } catch(e) { d = {error: 'Server error ('+r.status+'): '+e.message}; }
     const res = document.getElementById('result');
     res.style.display = 'block';
-    res.textContent = d.analysis || d.error || JSON.stringify(d,null,2);
+    if(d.status === 'processing' && d.job_id) {
+      res.textContent = 'Analyzing brief... (may take 30-60 seconds)';
+      const poll = setInterval(async () => {
+        const p = await fetch('/brief-status/'+d.job_id);
+        const pd = await p.json();
+        if(pd.status === 'done') { clearInterval(poll); res.textContent = pd.analysis; }
+        else if(pd.status === 'error') { clearInterval(poll); res.textContent = 'Error: '+pd.analysis; }
+      }, 3000);
+    } else {
+      res.textContent = d.analysis || d.error || JSON.stringify(d,null,2);
+    }
   } catch(err) {
     document.getElementById('result').style.display='block';
     document.getElementById('result').textContent='Error: '+err.message;
@@ -963,6 +974,13 @@ Be direct. Numbers first. Flag anything that changed vs last brief."""
         return jsonify({'analysis': analysis, 'status': 'ok'})
     except Exception as e:
         return jsonify({'error': str(e)[:300]}), 500
+
+
+@app.route('/brief-status/<job_id>')
+def brief_status(job_id):
+    from flask import jsonify
+    job = _jobs.get(job_id, {'status': 'not_found'})
+    return jsonify(job)
 
 
 @app.route('/chat-page')
