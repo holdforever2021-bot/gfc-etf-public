@@ -966,7 +966,18 @@ def chat():
     alpha = etf.get('alpha_layer', {}).get('positions', [])
 
     pos_lines = '\n'.join(f"  {p['ticker']}: {p.get('quantity',0)} shares @ ${p.get('avg_cost',0):.2f}, current ${p.get('current_price',0):.2f}, P&L {p.get('pnl_pct',0):+.1f}%" for p in positions)
-    alpha_lines = '\n'.join(f"  {p['ticker']} {p.get('strike_display',p.get('asset_type',''))} cost=${p.get('cost',0):.0f} MTM=${p.get('mtm',0):.0f} P&L={p.get('pnl_pct',0):+.1f}%" for p in alpha)
+    def _alpha_desc(p):
+        atype = p.get('asset_type','')
+        buy_sym = p.get('buy_symbol','').strip()
+        sell_sym = p.get('sell_symbol','').strip()
+        if atype == 'SPREAD' and buy_sym and sell_sym:
+            return (f"  {p['ticker']} BULL CALL SPREAD — BUY {buy_sym} / SELL {sell_sym} | "
+                    f"Structure: {p.get('strike_display','')} | "
+                    f"Cost=${p.get('cost',0):.0f} | MaxProfit=${p.get('max_profit',0):.0f} | "
+                    f"MTM=${p.get('mtm',0):.0f} | P&L={p.get('pnl_pct',0):+.1f}% | "
+                    f"Exit: {p.get('stop_type','Thesis only')} — NOT a naked call")
+        return f"  {p['ticker']} {atype} cost=${p.get('cost',0):.0f} MTM=${p.get('mtm',0):.0f} P&L={p.get('pnl_pct',0):+.1f}%"
+    alpha_lines = '\n'.join(_alpha_desc(p) for p in alpha)
 
     system = f"""You are the GFC American Frontier ETF agent. You manage this portfolio autonomously.
 
