@@ -947,33 +947,37 @@ Analyze this brief vs current holdings. Provide:
 
 Be direct. Numbers first. Flag anything that changed vs last brief."""
 
-    try:
-        # Try to extract text from PDF first
-        messages = []
-        text_content = ''
+    import base64, threading, uuid as _uuid
+    from flask import jsonify as _jfy
 
-        import base64
-        if filename.lower().endswith('.pdf') or file_bytes[:4] == b'%PDF':
-            # Send PDF directly to Claude — native document support, no server rendering
-            pdf_b64 = base64.standard_b64encode(file_bytes).decode()
-            messages = [{'role': 'user', 'content': [
-                {'type': 'document', 'source': {'type': 'base64', 'media_type': 'application/pdf', 'data': pdf_b64}},
-                {'type': 'text', 'text': 'Analyze this Amatya Research daily brief per the system instructions.'}
-            ]}]
-        else:
-            # Plain text
-            text_content = file_bytes.decode('utf-8', errors='ignore')[:8000]
-            messages = [{'role': 'user', 'content': text_content}]
+    # Build messages
+    if filename.lower().endswith('.pdf') or file_bytes[:4] == b'%PDF':
+        pdf_b64 = base64.standard_b64encode(file_bytes).decode()
+        messages = [{'role': 'user', 'content': [
+            {'type': 'document', 'source': {'type': 'base64', 'media_type': 'application/pdf', 'data': pdf_b64}},
+            {'type': 'text', 'text': 'Analyze this Amatya Research daily brief per the system instructions.'}
+        ]}]
+    else:
+        messages = [{'role': 'user', 'content': file_bytes.decode('utf-8', errors='ignore')[:8000]}]
 
-        r = req_lib.post('https://api.anthropic.com/v1/messages',
-            headers={'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json'},
-            json={'model': 'claude-sonnet-4-6', 'max_tokens': 1500,
-                  'system': system_prompt, 'messages': messages},
-            timeout=60)
-        analysis = r.json()['content'][0]['text'] if r.status_code == 200 else f'API error: {r.status_code} — {r.text[:200]}'
-        return jsonify({'analysis': analysis, 'status': 'ok'})
-    except Exception as e:
-        return jsonify({'error': str(e)[:300]}), 500
+    # Async — return job_id immediately, process in background thread
+    job_id = _uuid.uuid4().hex[:8]
+    _jobs[job_id] = {'status': 'processing', 'analysis': None}
+
+    def _run():
+        try:
+            r = req_lib.post('https://api.anthropic.com/v1/messages',
+                headers={'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json'},
+                json={'model': 'claude-sonnet-4-6', 'max_tokens': 1500,
+                      'system': system_prompt, 'messages': messages},
+                timeout=90)
+            analysis = r.json()['content'][0]['text'] if r.status_code == 200 else f'API error: {r.status_code}'
+            _jobs[job_id] = {'status': 'done', 'analysis': analysis}
+        except Exception as e:
+            _jobs[job_id] = {'status': 'error', 'analysis': str(e)[:300]}
+
+    threading.Thread(target=_run, daemon=True).start()
+    return _jfy({'status': 'processing', 'job_id': job_id})
 
 
 @app.route('/brief-status/<job_id>')
