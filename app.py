@@ -634,12 +634,13 @@ footer a{color:#a78bfa;text-decoration:none}
 <div class="grid4">
   <div class="scard">
     <div class="sl">Total NAV</div>
-    <div class="sv">${{ '%.2f'|format(s.get('nav',0)) }}</div>
+    <div class="sv">${{ '{:,.2f}'.format(last.get('agent_etf_nav', s.get('nav',0))) }}</div>
     <div class="ss">Inception ${{ '%.2f'|format(perf.get('inception_nav',2000)) }} · May 26 2026</div>
   </div>
   <div class="scard">
     <div class="sl">Total Return</div>
-    <div class="sv {{ 'pos' if perf.get('total_return_pct',0)>=0 else 'neg' }}">{{ '%+.2f'|format(perf.get('total_return_pct',0)) }}%</div>
+    {% set live_ret = ((last.get('agent_etf_nav',2000)-2000)/2000*100) if last.get('agent_etf_nav') else perf.get('total_return_pct',0) %}
+    <div class="sv {{ 'pos' if live_ret>=0 else 'neg' }}">{{ '%+.2f'|format(live_ret) }}%</div>
     <div class="ss">30-day review Jun 25, 2026</div>
   </div>
   <div class="scard">
