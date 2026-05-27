@@ -941,45 +941,17 @@ Be direct. Numbers first. Flag anything that changed vs last brief."""
         messages = []
         text_content = ''
 
-        if filename.endswith('.pdf') or file_bytes[:4] == b'%PDF':
-            try:
-                import fitz  # PyMuPDF
-                import base64, io
-                doc = fitz.open(stream=file_bytes, filetype='pdf')
-
-                # Try text extraction first
-                for page in doc:
-                    text_content += page.get_text()
-
-                # If text is mostly garbage (image-based PDF), use vision
-                readable = sum(1 for c in text_content if c.isalpha())
-                total = max(len(text_content), 1)
-
-                if readable / total < 0.3 or len(text_content.strip()) < 200:
-                    # Image-based PDF — render pages and send as vision
-                    image_messages = []
-                    for page_num in range(min(len(doc), 5)):  # max 5 pages
-                        page = doc[page_num]
-                        mat = fitz.Matrix(1.2, 1.2)  # 1.2x zoom, faster render
-                        pix = page.get_pixmap(matrix=mat)
-                        img_bytes = pix.tobytes('png')
-                        b64 = base64.standard_b64encode(img_bytes).decode()
-                        image_messages.append({
-                            'type': 'image',
-                            'source': {'type': 'base64', 'media_type': 'image/png', 'data': b64}
-                        })
-                    image_messages.append({'type': 'text', 'text': 'This is the Amatya Research daily brief. Analyze it per the system instructions.'})
-                    messages = [{'role': 'user', 'content': image_messages}]
-                else:
-                    messages = [{'role': 'user', 'content': text_content[:6000]}]
-                doc.close()
-            except ImportError:
-                # PyMuPDF not available, fall back to raw text
-                text_content = file_bytes.decode('utf-8', errors='ignore')[:6000]
-                messages = [{'role': 'user', 'content': text_content}]
+        import base64
+        if filename.lower().endswith('.pdf') or file_bytes[:4] == b'%PDF':
+            # Send PDF directly to Claude — native document support, no server rendering
+            pdf_b64 = base64.standard_b64encode(file_bytes).decode()
+            messages = [{'role': 'user', 'content': [
+                {'type': 'document', 'source': {'type': 'base64', 'media_type': 'application/pdf', 'data': pdf_b64}},
+                {'type': 'text', 'text': 'Analyze this Amatya Research daily brief per the system instructions.'}
+            ]}]
         else:
-            # Plain text or other format
-            text_content = file_bytes.decode('utf-8', errors='ignore')[:6000]
+            # Plain text
+            text_content = file_bytes.decode('utf-8', errors='ignore')[:8000]
             messages = [{'role': 'user', 'content': text_content}]
 
         r = req_lib.post('https://api.anthropic.com/v1/messages',
