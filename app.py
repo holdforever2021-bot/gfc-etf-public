@@ -486,18 +486,34 @@ tr.totals td{background:#0d1117;font-weight:700;border-top:2px solid var(--br);b
 footer{border-top:1px solid var(--br);padding:20px 5%;text-align:center;color:#374151;font-size:11px;background:var(--cd2);margin-top:20px}
 footer a{color:#a78bfa;text-decoration:none}
 /* Brief toggle JS */
-.brief-card{background:linear-gradient(135deg,rgba(109,40,217,.12),rgba(79,70,229,.07));border:1px solid rgba(124,58,237,.3);border-radius:14px;padding:20px 24px;margin-bottom:20px;position:relative}
-.brief-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:10px}
-.brief-title{font-size:13px;font-weight:700;color:#E2E8F0;letter-spacing:.04em}
-.brief-ts{font-size:11px;color:#4B5563;margin-top:3px}
-.brief-upload-btn{font-size:11px;font-weight:600;color:#a78bfa;text-decoration:none;background:rgba(124,58,237,.12);padding:4px 12px;border-radius:20px;border:1px solid rgba(124,58,237,.25);white-space:nowrap}
-.brief-upload-btn:hover{background:rgba(124,58,237,.25);color:#c4b5fd}
-.brief-body{font-size:13px;color:#94A3B8;line-height:1.7;max-height:120px;overflow:hidden;transition:max-height .3s}
-.brief-body.expanded{max-height:1200px}
-.brief-expand{font-size:11px;color:#6B7280;cursor:pointer;margin-top:8px;text-align:center}
-.brief-expand:hover{color:#a78bfa}
-.brief-empty{text-align:center;font-size:13px;color:#374151;padding:12px;margin-bottom:20px}
+.brief-card{background:rgba(13,7,27,.8);border:1px solid rgba(124,58,237,.25);border-radius:14px;padding:18px 20px;margin-bottom:20px}
+.brief-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.brief-title{font-size:13px;font-weight:700;color:#E2E8F0}
+.brief-ts{font-size:10px;color:#4B5563;margin-top:2px}
+.brief-upload-btn{font-size:11px;font-weight:600;color:#a78bfa;text-decoration:none;background:rgba(124,58,237,.1);padding:4px 12px;border-radius:20px;border:1px solid rgba(124,58,237,.2);white-space:nowrap}
+.brief-upload-btn:hover{background:rgba(124,58,237,.2)}
+.brief-sentiment{font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.08em;text-transform:uppercase}
+.sent-bull{background:rgba(16,185,129,.12);color:#34D399;border:1px solid rgba(16,185,129,.2)}
+.sent-caut{background:rgba(245,158,11,.12);color:#FCD34D;border:1px solid rgba(245,158,11,.2)}
+.sent-neut{background:rgba(148,163,184,.1);color:#94A3B8;border:1px solid rgba(148,163,184,.15)}
+.brief-thesis{font-size:12px;color:#94A3B8;margin-bottom:14px;line-height:1.5;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:8px;border-left:2px solid rgba(124,58,237,.4)}
+.brief-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.brief-section{background:rgba(255,255,255,.03);border-radius:10px;padding:12px 14px}
+.brief-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4B5563;margin-bottom:8px}
+.brief-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;font-size:12px;line-height:1.4}
+.brief-item:last-child{margin-bottom:0}
+.brief-ticker{font-weight:800;color:#E2E8F0;min-width:40px}
+.brief-action{font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;white-space:nowrap;align-self:flex-start;margin-top:1px}
+.act-buy{background:rgba(16,185,129,.12);color:#34D399}
+.act-sell{background:rgba(239,68,68,.12);color:#F87171}
+.act-hold{background:rgba(148,163,184,.1);color:#94A3B8}
+.brief-note{color:#64748B;font-size:12px}
+.brief-action-item{font-size:12px;color:#94A3B8;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.4}
+.brief-action-item:last-child{border-bottom:none}
+.brief-alpha{font-size:11px;color:#a78bfa;margin-top:10px;padding:8px 12px;background:rgba(124,58,237,.07);border-radius:8px}
+.brief-empty{text-align:center;font-size:12px;color:#374151;padding:12px;margin-bottom:20px}
 .brief-empty a{color:#a78bfa;text-decoration:none}
+@media(max-width:640px){.brief-grid{grid-template-columns:1fr}}
 
 /* MOBILE */
 @media(max-width:640px){
@@ -548,22 +564,69 @@ footer a{color:#a78bfa;text-decoration:none}
 
 {# ── DAILY BRIEF SECTION ── #}
 {% if brief and brief.analysis %}
-<div class="brief-card">
+{%- set bd = brief.parsed %}
+<div class="brief-card" id="briefCard">
   <div class="brief-header">
-    <div>
-      <div class="brief-title">Agent Daily Brief</div>
-      <div class="brief-ts">Amatya Research · {{ brief.date }} · Updated {{ brief.timestamp }} ET</div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div>
+        <span class="brief-sentiment {{ 'sent-bull' if bd and bd.sentiment=='BULLISH' else 'sent-caut' if bd and bd.sentiment=='CAUTIOUS' else 'sent-neut' }}">
+          {{ bd.sentiment if bd else '—' }}
+        </span>
+      </div>
+      <div>
+        <div class="brief-title">Agent Daily Brief</div>
+        <div class="brief-ts">Amatya Research · {{ brief.date }} · {{ brief.timestamp }} ET</div>
+      </div>
     </div>
-    <a href="/upload" class="brief-upload-btn">+ Upload New Brief</a>
+    <a href="/upload" class="brief-upload-btn">+ New Brief</a>
   </div>
-  <div class="brief-body" id="briefBody">{{ brief.analysis | replace('\n', '<br>') | safe }}</div>
-  <div class="brief-expand" onclick="toggleBrief()">Show more ↓</div>
+  {% if bd %}
+  {% if bd.sentiment_reason %}
+  <div class="brief-thesis">{{ bd.sentiment_reason }}</div>
+  {% endif %}
+  <div class="brief-grid">
+    {% if bd.top_opportunities %}
+    <div class="brief-section">
+      <div class="brief-section-title">🎯 Top Opportunities</div>
+      {% for opp in bd.top_opportunities %}
+      <div class="brief-item">
+        <span class="brief-ticker">{{ opp.ticker }}</span>
+        <span class="brief-action act-buy">{{ opp.action }}</span>
+        <span class="brief-note">{{ opp.reason }}{% if opp.level %} · <strong>{{ opp.level }}</strong>{% endif %}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% if bd.key_risks %}
+    <div class="brief-section">
+      <div class="brief-section-title">⚠️ Key Risks</div>
+      {% for risk in bd.key_risks %}
+      <div class="brief-item">
+        <span class="brief-ticker">{{ risk.ticker }}</span>
+        <span class="brief-note">{{ risk.risk }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% if bd.action_items %}
+  <div class="brief-section" style="margin-top:12px">
+    <div class="brief-section-title">⚡ Action Items</div>
+    {% for item in bd.action_items %}
+    <div class="brief-action-item">{{ loop.index }}. {{ item }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if bd.alpha_watch %}
+  <div class="brief-alpha">🔬 Alpha Watch: {{ bd.alpha_watch }}</div>
+  {% endif %}
+  {% else %}
+  <div style="font-size:12px;color:#4B5563;margin-top:8px">{{ brief.analysis[:200] }}...</div>
+  {% endif %}
 </div>
 {% else %}
 <div class="brief-empty">
-  <span>No daily brief yet — </span>
-  <a href="/upload">upload the Amatya brief</a>
-  <span> to see the agent's thinking here.</span>
+  No daily brief — <a href="/upload">upload the Amatya brief</a> to see the agent's thinking.
 </div>
 {% endif %}
 
@@ -980,19 +1043,30 @@ def upload_report():
     positions = etf_data.get('positions', [])
     pos_summary = ', '.join(f"{p['ticker']} ({p.get('pnl_pct',0):+.1f}%)" for p in positions)
 
-    system_prompt = f"""You are the GFC American Frontier ETF analyst reading the Amatya Research daily brief.
+    system_prompt = f"""You are the GFC American Frontier ETF analyst. Return ONLY valid JSON, no markdown, no prose.
 
 CURRENT PORTFOLIO: {pos_summary}
-CURRENT NAV: ${etf_data.get('nav', 0):,.2f} | Return: {etf_data.get('performance',{}).get('total_return_pct',0):+.2f}%
+NAV: ${etf_data.get('nav', 0):,.2f} | Return: {etf_data.get('performance',{}).get('total_return_pct',0):+.2f}%
 
-Analyze this brief vs current holdings. Provide:
-1. SIGNALS TODAY: Key buy/sell/hold signals per ticker with rationale
-2. ALPHA OPPORTUNITIES: Any catalyst plays worth flagging (options, sizing changes)
-3. RISK FLAGS: Any CAUTION or deteriorating thesis names
-4. ACTION ITEMS: Specific, numbered — what needs attention today
-5. HOLD LIST: Names where thesis is intact, no action needed
+Analyze the Amatya brief. Return this exact JSON structure:
+{{
+  "sentiment": "BULLISH|CAUTIOUS|NEUTRAL",
+  "sentiment_reason": "one sentence",
+  "top_opportunities": [
+    {{"ticker": "NOW", "action": "BUY/ADD", "reason": "one sentence", "level": ""}}
+  ],
+  "key_risks": [
+    {{"ticker": "FLY", "risk": "one sentence"}}
+  ],
+  "signals": {{
+    "NOK": {{"call": "HOLD", "note": "brief"}},
+    "ASTS": {{"call": "HOLD", "note": "brief"}}
+  }},
+  "action_items": ["specific action 1", "specific action 2"],
+  "alpha_watch": "one sentence on best alpha setup today"
+}}
 
-Be direct. Numbers first. Flag anything that changed vs last brief."""
+Max 2-3 items in each array. One sentence per field. No markdown."""
 
     import base64, threading, uuid as _uuid
     from flask import jsonify as _jfy
@@ -1024,6 +1098,13 @@ Be direct. Numbers first. Flag anything that changed vs last brief."""
             _latest_brief['analysis'] = analysis
             _latest_brief['timestamp'] = _dt2.now().strftime('%Y-%m-%d %H:%M')
             _latest_brief['date'] = _dt2.now().strftime('%b %d, %Y')
+            # Parse JSON for structured display
+            import re as _re, json as _json
+            try:
+                m = _re.search(r'\{.*\}', analysis, _re.DOTALL)
+                _latest_brief['parsed'] = _json.loads(m.group()) if m else None
+            except Exception:
+                _latest_brief['parsed'] = None
         except Exception as e:
             _jobs[job_id] = {'status': 'error', 'analysis': str(e)[:300]}
 
