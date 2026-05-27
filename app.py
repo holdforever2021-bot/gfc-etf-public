@@ -211,8 +211,8 @@ footer a{color:#a78bfa;text-decoration:none}
         <div class="chart-sub-text">Hypothetical backtest · Risk-tier weighted · FLY weight redistributed pre-IPO</div>
       </div>
       <div class="legend">
-        <div class="leg"><div class="leg-line" style="background:#7C3AED"></div>Frontier ETF: <strong style="color:#a78bfa;margin-left:4px">${{"{:,.0f}".format(bt.etf_final)}} (+{{bt.etf_return}}%)</strong></div>
-        <div class="leg"><div class="leg-line" style="background:#374151;border-top:2px dashed #374151;height:0"></div>QQQ: <strong style="color:#6B7280;margin-left:4px">${{"{:,.0f}".format(bt.qqq_final)}} (+{{bt.qqq_return}}%)</strong></div>
+        <div class="leg"><div class="leg-line" style="background:#7C3AED"></div>Frontier ETF: <strong style="color:#a78bfa;margin-left:4px">${{ "%.0f"|format(bt.etf_final) }} (+{{bt.etf_return}}%)</strong></div>
+        <div class="leg"><div class="leg-line" style="background:#374151;border-top:2px dashed #374151;height:0"></div>QQQ: <strong style="color:#6B7280;margin-left:4px">${{ "%.0f"|format(bt.qqq_final) }} (+{{bt.qqq_return}}%)</strong></div>
       </div>
     </div>
     <div style="height:320px;position:relative"><canvas id="btChart"></canvas></div>
