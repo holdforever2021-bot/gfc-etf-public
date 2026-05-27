@@ -933,7 +933,7 @@ document.getElementById('uploadForm').onsubmit = async function(e) {
       const poll = setInterval(async () => {
         const p = await fetch('/brief-status/'+d.job_id);
         const pd = await p.json();
-        if(pd.status === 'done') { clearInterval(poll); res.textContent = pd.analysis; }
+        if(pd.status === 'done') { clearInterval(poll); res.textContent = 'Analysis complete — returning to portfolio...'; setTimeout(()=>{ window.location='/dashboard'; }, 1500); }
         else if(pd.status === 'error') { clearInterval(poll); res.textContent = 'Error: '+pd.analysis; }
       }, 3000);
     } else {
