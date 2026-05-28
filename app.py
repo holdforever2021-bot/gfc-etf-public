@@ -656,6 +656,16 @@ footer a{color:#a78bfa;text-decoration:none}
     <div class="sv">${{ '%.2f'|format(s.get('cash',0)) }}</div>
     <div class="ss">Alpha budget: ${{ '%.0f'|format(s.get('initial_capital',2000)*0.20) }}</div>
   </div>
+  <div class="scard">
+    <div class="sl">Today</div>
+    {%- set prev = hist[-2] if hist|length >= 2 else {} %}
+    {%- set today_nav = last.get('agent_etf_nav', 2000) %}
+    {%- set prev_nav = prev.get('agent_etf_nav', today_nav) %}
+    {%- set day_ret = ((today_nav - prev_nav) / prev_nav * 100) if prev_nav else 0 %}
+    {%- set day_pnl = today_nav - prev_nav %}
+    <div class="sv {{ 'pos' if day_ret>=0 else 'neg' }}">{{ '%+.2f'|format(day_ret) }}%</div>
+    <div class="ss">${{ '%+.2f'|format(day_pnl) }} vs yesterday</div>
+  </div>
 </div>
 
 <!-- LIVE PERFORMANCE CHART — dollar value, same style as backtest -->
