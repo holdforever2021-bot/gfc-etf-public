@@ -563,6 +563,34 @@ footer a{color:#a78bfa;text-decoration:none}
 {% set txns = s.get('transactions', []) %}
 {% set hist = s.get('performance_history', []) %}
 
+{# ── DAILY SIGNAL — TIER 1 AGENT ── #}
+{% set sig = s.get("daily_signal", {}) %}
+{% if sig and sig.get("date") %}
+<div class="brief-card" style="margin-bottom:12px;background:rgba(13,7,27,.8);border-color:rgba(16,185,129,.2)">
+  <div class="brief-header">
+    <div>
+      <div class="brief-title" style="color:#34D399">Agent Signal · {{ sig.date }} {{ sig.time }}</div>
+      <div class="brief-ts">Tier 1 Intelligence · {{ sig.sentiment }}</div>
+    </div>
+  </div>
+  <div class="brief-grid" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="brief-section">
+      <div class="brief-section-title">📊 What Changed</div>
+      {% for item in sig.get("what_changed",[]) %}<div class="brief-action-item">{{ item }}</div>{% endfor %}
+    </div>
+    <div class="brief-section">
+      <div class="brief-section-title">⚡ Next Catalyst</div>
+      <div style="font-size:12px;color:#94A3B8;line-height:1.5">{{ sig.get("next_catalyst","None in 5 days") }}</div>
+      {% if sig.get("top_setup") %}<div style="font-size:11px;color:#34D399;margin-top:8px">{{ sig.top_setup }}</div>{% endif %}
+    </div>
+    <div class="brief-section">
+      <div class="brief-section-title">⚠️ Alerts</div>
+      {% if sig.get("thesis_alerts") %}{% for a in sig.thesis_alerts %}<div class="brief-action-item" style="color:#F87171">{{ a }}</div>{% endfor %}{% else %}<div style="font-size:12px;color:#374151">No thesis breaks today</div>{% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
 {# ── DAILY BRIEF SECTION ── #}
 {% if brief and brief.analysis %}
 {%- set bd = brief.parsed %}
