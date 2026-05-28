@@ -514,7 +514,16 @@ footer a{color:#a78bfa;text-decoration:none}
 .brief-alpha{font-size:11px;color:#a78bfa;margin-top:10px;padding:8px 12px;background:rgba(124,58,237,.07);border-radius:8px}
 .brief-empty{text-align:center;font-size:12px;color:#374151;padding:12px;margin-bottom:20px}
 .brief-empty a{color:#a78bfa;text-decoration:none}
-@media(max-width:640px){.brief-grid{grid-template-columns:1fr}}
+@media(max-width:640px){
+  .brief-grid{grid-template-columns:1fr}
+  #sigGrid{grid-template-columns:1fr!important}
+  #sigGrid .brief-section{padding:10px 12px}
+  #sigGrid .brief-section-title{font-size:10px;letter-spacing:.06em;margin-bottom:6px}
+  #sigGrid .brief-action-item{font-size:12px;padding:4px 0}
+  .sig-catalyst-text{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .sig-catalyst-setup{font-size:11px!important;margin-top:6px!important}
+  .brief-card{padding:14px 16px!important}
+}
 
 /* MOBILE */
 @media(max-width:640px){
@@ -573,21 +582,29 @@ footer a{color:#a78bfa;text-decoration:none}
       <div class="brief-ts">Tier 1 Intelligence · {{ sig.sentiment }}</div>
     </div>
   </div>
-  <div class="brief-grid" style="grid-template-columns:1fr 1fr 1fr">
+  <div class="brief-grid" style="grid-template-columns:1fr 1fr 1fr" id="sigGrid">
     <div class="brief-section">
       <div class="brief-section-title">📊 What Changed</div>
       {% for item in sig.get("what_changed",[]) %}<div class="brief-action-item">{{ item }}</div>{% endfor %}
     </div>
     <div class="brief-section">
       <div class="brief-section-title">⚡ Next Catalyst</div>
-      <div style="font-size:12px;color:#94A3B8;line-height:1.5">{{ sig.get("next_catalyst","None in 5 days") }}</div>
-      {% if sig.get("top_setup") %}<div style="font-size:11px;color:#34D399;margin-top:8px">{{ sig.top_setup }}</div>{% endif %}
+      <div class="sig-catalyst-text" style="font-size:12px;color:#94A3B8;line-height:1.5">{{ sig.get("next_catalyst","None in 5 days") }}</div>
+      {% if sig.get("top_setup") %}<div class="sig-catalyst-setup" style="font-size:11px;color:#34D399;margin-top:8px">{{ sig.top_setup | replace('— ADD:','—') | replace('— BUY/ADD:','—') | replace('— BUY:','—') }}</div>{% endif %}
     </div>
     <div class="brief-section">
       <div class="brief-section-title">⚠️ Alerts</div>
       {% if sig.get("thesis_alerts") %}{% for a in sig.thesis_alerts %}<div class="brief-action-item" style="color:#F87171">{{ a }}</div>{% endfor %}{% else %}<div style="font-size:12px;color:#374151">No thesis breaks today</div>{% endif %}
     </div>
   </div>
+  {% if sig.get("thesis_alerts") %}
+  <div style="margin-top:10px;padding:10px 14px;background:rgba(239,68,68,.07);border-left:2px solid #F87171;border-radius:0 8px 8px 0">
+    <div class="brief-section-title" style="color:#F87171;margin-bottom:6px">📋 Action Items</div>
+    {% for a in sig.thesis_alerts %}
+    <div class="brief-action-item" style="color:#FCA5A5">→ {{ a.split('—')[0].strip() }} — review thesis, consider trim or stop</div>
+    {% endfor %}
+  </div>
+  {% endif %}
 </div>
 {% endif %}
 
@@ -620,7 +637,7 @@ footer a{color:#a78bfa;text-decoration:none}
       {% for opp in bd.top_opportunities %}
       <div class="brief-item">
         <span class="brief-ticker">{{ opp.ticker }}</span>
-        <span class="brief-action act-buy">{{ opp.action }}</span>
+        <span class="brief-action act-buy">{{ opp.action | replace('BUY/ADD','ADD') | replace('BUY','ADD') }}</span>
         <span class="brief-note">{{ opp.reason }}{% if opp.level %} · <strong>{{ opp.level }}</strong>{% endif %}</span>
       </div>
       {% endfor %}
@@ -646,6 +663,14 @@ footer a{color:#a78bfa;text-decoration:none}
     {% endfor %}
   </div>
   {% endif %}
+  {%- if sig and sig.get('thesis_alerts') %}
+  <div class="brief-section" style="margin-top:12px;border-left:2px solid #F87171;background:rgba(239,68,68,.05)">
+    <div class="brief-section-title" style="color:#F87171">📋 Action Items from Alerts</div>
+    {% for alert in sig.thesis_alerts %}
+    <div class="brief-action-item" style="color:#FCA5A5">→ {{ alert }} — review position sizing or thesis</div>
+    {% endfor %}
+  </div>
+  {%- endif %}
   {% if bd.alpha_watch %}
   <div class="brief-alpha">🔬 Alpha Watch: {{ bd.alpha_watch }}</div>
   {% endif %}
@@ -1164,7 +1189,7 @@ Analyze the Amatya brief. Return this exact JSON structure:
   "sentiment": "BULLISH|CAUTIOUS|NEUTRAL",
   "sentiment_reason": "one sentence",
   "top_opportunities": [
-    {{"ticker": "NOW", "action": "BUY/ADD", "reason": "one sentence", "level": ""}}
+    {{"ticker": "NOW", "action": "ADD", "reason": "one sentence", "level": ""}}
   ],
   "key_risks": [
     {{"ticker": "FLY", "risk": "one sentence"}}
