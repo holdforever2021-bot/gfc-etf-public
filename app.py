@@ -442,6 +442,7 @@ nav{background:rgba(15,7,32,.97);backdrop-filter:blur(16px);border-bottom:1px so
 
 /* STAT CARDS */
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
 .scard{background:var(--cd);border:1px solid var(--br);border-radius:12px;padding:20px 22px;transition:border-color .2s}
 .scard:first-child{border-left:3px solid var(--p)}
 .scard:hover{border-color:rgba(124,58,237,.35)}
@@ -633,7 +634,7 @@ footer a{color:#a78bfa;text-decoration:none}
 {% set hist = s.get('performance_history', []) %}
 {% set last = hist[-1] if hist else {} %}
 <!-- NAV STATS -->
-<div class="grid4">
+<div class="grid5">
   <div class="scard">
     <div class="sl">Total NAV</div>
     <div class="sv">${{ '%.2f'|format(last.get('agent_etf_nav', s.get('nav',0))) }}</div>
