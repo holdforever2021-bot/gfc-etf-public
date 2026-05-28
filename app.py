@@ -675,7 +675,7 @@ footer a{color:#a78bfa;text-decoration:none}
   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px">
     <div>
       <div style="font-size:16px;font-weight:700;color:#E2E8F0">Growth of $2,000 · May 26, 2026</div>
-      <div style="font-size:11px;color:#4B5563;margin-top:3px">Live portfolio · Account 668 · Updated {{ now }} ET</div>
+      <div style="font-size:11px;color:#4B5563;margin-top:3px">Live portfolio · Account 668 · Schwab synced: <strong style="color:#6D28D9">{{ s.get("last_updated","—") }} ET</strong></div>
     </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap">
       <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600">
