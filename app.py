@@ -543,14 +543,19 @@ footer a{color:#a78bfa;text-decoration:none}
 }
 @media(max-width:768px){
   .grid4{grid-template-columns:repeat(2,1fr)}
+  .grid5{grid-template-columns:repeat(2,1fr)}
   .mini-stats{grid-template-columns:repeat(2,1fr)}
   .page{padding:20px}
   nav{padding:0 20px}
   th,td{padding:9px 12px;font-size:12px}
+  .scard{padding:14px 16px}
+  .sv{font-size:22px}
 }
 @media(max-width:480px){
   .grid4{grid-template-columns:1fr 1fr}
-  .sv{font-size:22px}
+  .grid5{grid-template-columns:1fr 1fr}
+  #todayCard{grid-column:1/-1}
+  .sv{font-size:20px}
 }
 </style></head><body>
 
@@ -709,7 +714,7 @@ footer a{color:#a78bfa;text-decoration:none}
     <div class="sv">${{ '%.2f'|format(s.get('cash',0)) }}</div>
     <div class="ss">Alpha budget: ${{ '%.0f'|format(s.get('initial_capital',2000)*0.20) }}</div>
   </div>
-  <div class="scard">
+  <div class="scard" style="grid-column:span 1" id="todayCard">
     <div class="sl">Today</div>
     {%- set prev = hist[-2] if hist|length >= 2 else {} %}
     {%- set today_nav = last.get('agent_etf_nav', 2000) %}
