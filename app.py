@@ -660,7 +660,7 @@ footer a{color:#a78bfa;text-decoration:none}
       <div class="brief-item">
         <span class="brief-ticker">{{ opp.ticker }}</span>
         <span class="brief-action act-buy">{{ opp.action | replace('BUY/ADD','ADD') | replace('BUY','ADD') }}</span>
-        <span class="brief-note">{{ opp.reason }}{% if opp.level %} · <strong>{{ opp.level }}</strong>{% endif %}</span>
+        <span class="brief-note">{{ opp.reason }}</span>
       </div>
       {% endfor %}
     </div>
@@ -685,14 +685,6 @@ footer a{color:#a78bfa;text-decoration:none}
     {% endfor %}
   </div>
   {% endif %}
-  {%- if sig and sig.get('thesis_alerts') %}
-  <div class="brief-section" style="margin-top:12px;border-left:2px solid #F87171;background:rgba(239,68,68,.05)">
-    <div class="brief-section-title" style="color:#F87171">📋 Action Items from Alerts</div>
-    {% for alert in sig.thesis_alerts %}
-    <div class="brief-action-item" style="color:#FCA5A5">→ {{ alert }} — review position sizing or thesis</div>
-    {% endfor %}
-  </div>
-  {%- endif %}
   {% if bd.alpha_watch %}
   <div class="brief-alpha">🔬 Alpha Watch: {{ bd.alpha_watch }}</div>
   {% endif %}
@@ -725,6 +717,7 @@ footer a{color:#a78bfa;text-decoration:none}
     <a href="/upload" class="brief-upload-btn">+ Upload</a>
   </div>
   {% if ba %}
+  <div style="font-size:10px;color:#4B5563;margin-bottom:8px;padding:4px 10px;background:rgba(75,85,99,.1);border-radius:6px;display:inline-block">⚠️ Research context only — prices from external source, verify before acting</div>
   {% if ba.sentiment_reason %}<div class="brief-thesis">{{ ba.sentiment_reason }}</div>{% endif %}
   <div class="brief-grid">
     {% if ba.top_opportunities %}
