@@ -610,10 +610,18 @@ footer a{color:#a78bfa;text-decoration:none}
     {% endfor %}
   </div>
   {% endif %}
+  {% if sig.get("amatya_extras") %}
+  <div style="margin-top:8px;padding:10px 14px;background:rgba(167,139,250,.05);border-left:2px solid #7C3AED;border-radius:0 8px 8px 0">
+    <div class="brief-section-title" style="color:#a78bfa;margin-bottom:6px">🔬 Amatya Adds</div>
+    {% for x in sig.amatya_extras %}
+    <div class="brief-action-item" style="color:#C4B5FD">{{ x }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
 </div>
 {% endif %}
 
-{# ── DAILY BRIEF SECTION ── #}
+{# ── AGENT BRIEF ── #}
 {% if brief and brief.analysis %}
 {%- set bd = brief.parsed %}
 <div class="brief-card" id="briefCard">
@@ -625,8 +633,8 @@ footer a{color:#a78bfa;text-decoration:none}
         </span>
       </div>
       <div>
-        <div class="brief-title">Agent Daily Brief</div>
-        <div class="brief-ts">Amatya Research · {{ brief.date }} · {{ brief.timestamp }} ET</div>
+        <div class="brief-title">🤖 Agent Intelligence</div>
+        <div class="brief-ts">Auto-generated · {{ brief.date }} · {{ brief.timestamp }} ET</div>
       </div>
     </div>
     <a href="/upload" class="brief-upload-btn">+ New Brief</a>
@@ -685,7 +693,59 @@ footer a{color:#a78bfa;text-decoration:none}
 </div>
 {% else %}
 <div class="brief-empty">
-  No daily brief — <a href="/upload">upload the Amatya brief</a> to see the agent's thinking.
+  No agent brief yet — runs at 9:00 AM ET daily.
+</div>
+{% endif %}
+
+{# ── AMATYA RESEARCH INPUT ── #}
+{% if brief_amatya and brief_amatya.analysis %}
+{%- set ba = brief_amatya.parsed %}
+<div class="brief-card" style="margin-bottom:12px;border-color:rgba(124,58,237,.25)">
+  <div class="brief-header">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div>
+        <span class="brief-sentiment {{ 'sent-bull' if ba and ba.sentiment=='BULLISH' else 'sent-caut' if ba and ba.sentiment=='CAUTIOUS' else 'sent-neut' }}">
+          {{ ba.sentiment if ba else '—' }}
+        </span>
+      </div>
+      <div>
+        <div class="brief-title">📋 Amatya Research</div>
+        <div class="brief-ts">External input · {{ brief_amatya.date }} · {{ brief_amatya.timestamp }} ET</div>
+      </div>
+    </div>
+    <a href="/upload" class="brief-upload-btn">+ Upload</a>
+  </div>
+  {% if ba %}
+  {% if ba.sentiment_reason %}<div class="brief-thesis">{{ ba.sentiment_reason }}</div>{% endif %}
+  <div class="brief-grid">
+    {% if ba.top_opportunities %}
+    <div class="brief-section">
+      <div class="brief-section-title">🎯 Their Top Picks</div>
+      {% for opp in ba.top_opportunities %}
+      <div class="brief-item">
+        <span class="brief-ticker">{{ opp.ticker }}</span>
+        <span class="brief-action act-buy">{{ opp.action | replace('BUY/ADD','ADD') | replace('BUY','ADD') }}</span>
+        <span class="brief-note">{{ opp.reason }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% if ba.key_risks %}
+    <div class="brief-section">
+      <div class="brief-section-title">⚠️ Their Risks</div>
+      {% for risk in ba.key_risks %}
+      <div class="brief-item">
+        <span class="brief-ticker">{{ risk.ticker }}</span>
+        <span class="brief-note">{{ risk.risk }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% if ba.alpha_watch %}
+  <div class="brief-alpha">🔬 Amatya Alpha Watch: {{ ba.alpha_watch }}</div>
+  {% endif %}
+  {% endif %}
 </div>
 {% endif %}
 
@@ -1007,10 +1067,13 @@ def dashboard():
     if not s:
         return '<h2 style="font-family:sans-serif;padding:40px;color:#fff;background:#0a0a14;min-height:100vh">Data feed temporarily unavailable — try again shortly.</h2>', 503
     from datetime import datetime
-    # Seed brief from DO state if Render memory lost it (deploy/restart)
-    if not _latest_brief.get('analysis') and s.get('daily_brief',{}).get('analysis'):
-        _latest_brief.update(s['daily_brief'])
-    return render_template_string(DASHBOARD_HTML, s=s, brief=_latest_brief,
+    # Seed briefs from DO state if Render memory lost them (deploy/restart)
+    if not _latest_brief.get('analysis') and s.get('brief_amatya',{}).get('analysis'):
+        _latest_brief.update(s['brief_amatya'])
+    brief_agent = s.get('brief_agent', s.get('daily_brief', {}))
+    brief_amatya = s.get('brief_amatya', _latest_brief if _latest_brief.get('source') == 'amatya' else {})
+    return render_template_string(DASHBOARD_HTML, s=s, brief=brief_agent,
+                                   brief_amatya=brief_amatya,
                                    now=datetime.now().strftime('%Y-%m-%d %H:%M'))
 
 ANTHROPIC_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
@@ -1246,15 +1309,15 @@ Max 2-3 items in each array. One sentence per field. No markdown."""
             brief_obj = {
                 'analysis': analysis, 'parsed': parsed,
                 'timestamp': _dt2.now().strftime('%Y-%m-%d %H:%M'),
-                'date': _dt2.now().strftime('%b %d, %Y')
+                'date': _dt2.now().strftime('%b %d, %Y'),
+                'source': 'amatya',
             }
             _latest_brief.update(brief_obj)
 
-            # Also seed _latest_brief from DO on startup if available
-            # Persist: push brief back into DO state so it survives Render deploys
+            # Persist to DO under brief_amatya — never overwrites brief_agent
             try:
                 do_state = req_lib.get('https://jarvis.ankurjoshi-demo.com/etf-data', timeout=8).json()
-                do_state['daily_brief'] = brief_obj
+                do_state['brief_amatya'] = brief_obj
                 req_lib.post('https://jarvis.ankurjoshi-demo.com/etf-write',
                     headers={'X-Write-Token': os.environ.get('DO_WRITE_TOKEN','')},
                     json=do_state, timeout=10)
