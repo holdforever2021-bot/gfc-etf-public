@@ -484,6 +484,7 @@ tr.totals td{background:#0d1117;font-weight:700;border-top:2px solid var(--br);b
 /* CHIPS */
 .chip{display:inline-block;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px}
 .chip-green{background:rgba(16,185,129,.12);color:var(--gr);border:1px solid rgba(16,185,129,.2)}
+.chip-red{background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.2)}
 .chip-blue{background:rgba(37,99,235,.12);color:#60A5FA;border:1px solid rgba(37,99,235,.2)}
 .chip-purple{background:rgba(124,58,237,.12);color:#a78bfa;border:1px solid rgba(124,58,237,.2)}
 .chip-amber{background:rgba(245,158,11,.12);color:#FCD34D;border:1px solid rgba(245,158,11,.2)}
@@ -1093,17 +1094,15 @@ window.addEventListener('DOMContentLoaded',function(){
     <tr>
       <td style="color:var(--mt)">{{t.get('date','')}}</td>
       <td><strong>{{t.get('ticker','')}}</strong></td>
-      <td><span class="chip chip-green">{{t.get('action','BUY')}}</span></td>
+      {%- set act = t.get('action','BUY') %}
+      {%- set is_sell = act in ('SELL','STO','STC') %}
+      <td><span class="chip {{ 'chip-red' if is_sell else 'chip-green' }}">{{act}}</span></td>
       <td style="color:var(--mt)">{{t.get('quantity','')}}</td>
       <td style="color:var(--mt)">${{'%.4f'|format(t.get('price',0))}}</td>
       <td>${{'%.2f'|format(t.get('total',0))}}</td>
       <td><span class="chip chip-green">FILLED</span></td>
     </tr>
     {% endfor %}
-    <tr class="totals">
-      <td colspan="5" style="text-align:right;padding-right:16px;color:var(--mt)">TOTAL DEPLOYED</td>
-      <td>${{'%.2f'|format(ns2.total)}}</td><td>—</td>
-    </tr>
     </tbody>
   </table>
 </div>
