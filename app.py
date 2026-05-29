@@ -767,82 +767,124 @@ footer a{color:#a78bfa;text-decoration:none}
 
 {% set hist = s.get('performance_history', []) %}
 {% set last = hist[-1] if hist else {} %}
-<!-- NAV STATS -->
+{# ── Pre-compute base/alpha values ── #}
+{%- set ic = s.get('initial_capital', 2000) %}
+{%- set nav_total = s.get('nav', ic) %}
+{%- set cash_v = s.get('cash', 0) %}
+{%- set eq_val = namespace(v=0) %}
+{%- set eq_cost = namespace(v=0) %}
+{%- for p in positions %}
+  {%- set eq_val.v = eq_val.v + p.get('market_value',0) %}
+  {%- set eq_cost.v = eq_cost.v + p.get('avg_cost',0) * p.get('quantity',0) %}
+{%- endfor %}
+{%- set alpha_val = namespace(v=0, cost=0) %}
+{%- for ap in s.get('alpha_layer',{}).get('positions',[]) %}
+  {%- set alpha_val.v = alpha_val.v + (ap.mtm if ap.mtm else ap.cost) %}
+  {%- set alpha_val.cost = alpha_val.cost + ap.get('cost',0) %}
+{%- endfor %}
+{%- set base_ret_d = eq_val.v - eq_cost.v %}
+{%- set alpha_ret_d = alpha_val.v - alpha_val.cost %}
+{%- set base_ret_pct = (base_ret_d / ic * 100) | round(2) %}
+{%- set alpha_ret_pct = (alpha_ret_d / ic * 100) | round(2) %}
+{%- set base_pct = ((eq_val.v / nav_total * 100) | round(1)) if nav_total else 0 %}
+{%- set alpha_pct = ((alpha_val.v / nav_total * 100) | round(1)) if nav_total else 0 %}
+{%- set cash_pct = ((cash_v / nav_total * 100) | round(1)) if nav_total else 0 %}
+{%- set alloc_ok = base_pct >= 72 and base_pct <= 88 %}
+{%- set prev = hist[-2] if hist|length >= 2 else {} %}
+{%- set today_nav = last.get('agent_etf_nav', ic) %}
+{%- set prev_nav = prev.get('agent_etf_nav', today_nav) %}
+{%- set base_today_nav = last.get('base_etf_nav', eq_val.v) %}
+{%- set base_prev_nav  = prev.get('base_etf_nav', base_today_nav) %}
+{%- set day_total_ret = ((today_nav - prev_nav) / prev_nav * 100) if prev_nav else 0 %}
+{%- set day_total_pnl = today_nav - prev_nav %}
+{%- set day_base_pnl  = base_today_nav - base_prev_nav %}
+{%- set day_base_ret  = (day_base_pnl / base_prev_nav * 100) if base_prev_nav else 0 %}
+{%- set day_alpha_pnl = day_total_pnl - day_base_pnl %}
+{%- set realized_pnl  = perf.get('realized_pnl', 0) %}
+
+<!-- NAV STATS — 5 cards, no separate cash card -->
 <div class="grid5">
+
+  {# 1. TOTAL NAV #}
   <div class="scard">
     <div class="sl">Total NAV</div>
-    <div class="sv">${{ '%.2f'|format(last.get('agent_etf_nav', s.get('nav',0))) }}</div>
-    <div class="ss">Inception ${{ '%.2f'|format(perf.get('inception_nav',2000)) }} · May 26 2026</div>
+    <div class="sv">${{ '%.2f'|format(today_nav) }}</div>
+    <div class="ss">Inception ${{ '%.0f'|format(ic) }} · May 26 2026</div>
   </div>
+
+  {# 2. TOTAL RETURN — Base + Alpha split #}
+  {%- set live_ret = ((today_nav - ic) / ic * 100) | round(2) %}
+  {%- set live_pnl = today_nav - ic %}
   <div class="scard">
     <div class="sl">Total Return</div>
-    {% set live_ret = ((last.get('agent_etf_nav',2000)-2000)/2000*100) if last.get('agent_etf_nav') else perf.get('total_return_pct',0) %}
-    <div class="sv {{ 'pos' if live_ret>=0 else 'neg' }}">{{ '%+.2f'|format(live_ret) }}%</div>
-    <div class="ss">30-day review Jun 25, 2026</div>
+    <div class="sv {{ 'pos' if live_ret>=0 else 'neg' }}">{{ '%+.2f'|format(live_ret) }}% <span style="font-size:14px">${{ '%+.0f'|format(live_pnl) }}</span></div>
+    <div style="margin-top:6px;display:flex;flex-direction:column;gap:2px">
+      <div class="ss">Base: <strong style="color:{{ '#34D399' if base_ret_pct>=0 else '#F87171' }}">{{ '%+.2f'|format(base_ret_pct) }}% / ${{ '%+.0f'|format(base_ret_d) }}</strong></div>
+      <div class="ss">Alpha: <strong style="color:{{ '#a78bfa' if alpha_ret_pct>=0 else '#F87171' }}">{{ '%+.2f'|format(alpha_ret_pct) }}% / ${{ '%+.0f'|format(alpha_ret_d) }}</strong></div>
+    </div>
   </div>
+
+  {# 3. UNREALIZED P&L — Base + Alpha + Realized #}
+  {%- set eq_unreal = eq_val.v - eq_cost.v %}
+  {%- set alpha_unreal = alpha_val.v - alpha_val.cost %}
+  {%- set total_unreal = eq_unreal + alpha_unreal %}
   <div class="scard">
     <div class="sl">Unrealized P&L</div>
-    <div class="sv {{ 'pos' if perf.get('unrealized_pnl',0)>=0 else 'neg' }}">${{ '%+.2f'|format(perf.get('unrealized_pnl',0)) }}</div>
-    <div class="ss">Realized: ${{ '%+.2f'|format(perf.get('realized_pnl',0)) }}</div>
+    <div class="sv {{ 'pos' if total_unreal>=0 else 'neg' }}">${{ '%+.0f'|format(total_unreal) }}</div>
+    <div style="margin-top:6px;display:flex;flex-direction:column;gap:2px">
+      <div class="ss">Base: <strong style="color:{{ '#34D399' if eq_unreal>=0 else '#F87171' }}">${{ '%+.0f'|format(eq_unreal) }}</strong></div>
+      <div class="ss">Alpha: <strong style="color:{{ '#a78bfa' if alpha_unreal>=0 else '#F87171' }}">${{ '%+.0f'|format(alpha_unreal) }}</strong></div>
+      <div class="ss">Realized: <strong style="color:{{ '#34D399' if realized_pnl>=0 else '#F87171' }}">${{ '%+.0f'|format(realized_pnl) }}</strong></div>
+    </div>
   </div>
-  <div class="scard" style="grid-column:span 1" id="todayCard">
+
+  {# 4. TODAY — Base + Alpha split #}
+  <div class="scard" id="todayCard">
     <div class="sl">Today</div>
-    {%- set prev = hist[-2] if hist|length >= 2 else {} %}
-    {%- set today_nav = last.get('agent_etf_nav', 2000) %}
-    {%- set prev_nav = prev.get('agent_etf_nav', today_nav) %}
-    {%- set day_ret = ((today_nav - prev_nav) / prev_nav * 100) if prev_nav else 0 %}
-    {%- set day_pnl = today_nav - prev_nav %}
-    <div class="sv {{ 'pos' if day_ret>=0 else 'neg' }}">{{ '%+.2f'|format(day_ret) }}%</div>
-    <div class="ss">${{ '%+.2f'|format(day_pnl) }} vs yesterday</div>
+    <div class="sv {{ 'pos' if day_total_ret>=0 else 'neg' }}">{{ '%+.2f'|format(day_total_ret) }}% <span style="font-size:14px">${{ '%+.0f'|format(day_total_pnl) }}</span></div>
+    <div style="margin-top:6px;display:flex;flex-direction:column;gap:2px">
+      <div class="ss">Base: <strong style="color:{{ '#34D399' if day_base_ret>=0 else '#F87171' }}">{{ '%+.2f'|format(day_base_ret) }}% / ${{ '%+.0f'|format(day_base_pnl) }}</strong></div>
+      <div class="ss">Alpha: <strong style="color:{{ '#a78bfa' if day_alpha_pnl>=0 else '#F87171' }}">${{ '%+.0f'|format(day_alpha_pnl) }}</strong></div>
+    </div>
   </div>
-  {# ── ALLOCATION STAT — Base vs Alpha (target 80/20) ── #}
-  {%- set alpha_mtm = s.get('alpha_layer',{}).get('positions',[]) | map(attribute='mtm') | list %}
-  {%- set alpha_val = namespace(v=0) %}
-  {%- for ap in s.get('alpha_layer',{}).get('positions',[]) %}
-    {%- set alpha_val.v = alpha_val.v + (ap.mtm if ap.mtm else ap.cost) %}
-  {%- endfor %}
-  {%- set eq_mv = positions | map(attribute='market_value') | list %}
-  {%- set eq_val = namespace(v=0) %}
-  {%- for p in positions %}{%- set eq_val.v = eq_val.v + p.get('market_value',0) %}{%- endfor %}
-  {%- set nav_total = s.get('nav', 2000) %}
-  {%- set base_pct = ((eq_val.v / nav_total * 100) | round(1)) if nav_total else 0 %}
-  {%- set alpha_pct = ((alpha_val.v / nav_total * 100) | round(1)) if nav_total else 0 %}
-  {%- set alloc_ok = base_pct >= 72 and base_pct <= 88 %}
+
+  {# 5. ALLOCATION PIE — Base / Alpha / Cash (no separate cash card) #}
   <div class="scard" style="{{ 'border-color:rgba(239,68,68,.4)' if not alloc_ok else '' }}">
     <div class="sl">Allocation</div>
-    <div style="display:flex;align-items:center;gap:10px;margin:6px 0">
-      <canvas id="allocPie" width="44" height="44"></canvas>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#E2E8F0">{{ base_pct }}% Base</div>
-        <div style="font-size:12px;color:#a78bfa;font-weight:600">{{ alpha_pct }}% Alpha</div>
+    <div style="display:flex;align-items:center;gap:10px;margin:4px 0 6px">
+      <canvas id="allocPie" width="48" height="48"></canvas>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <div class="ss"><span style="color:#38BDF8;font-weight:700">{{ base_pct }}%</span> Base</div>
+        <div class="ss"><span style="color:#a78bfa;font-weight:700">{{ alpha_pct }}%</span> Alpha</div>
+        <div class="ss"><span style="color:#4B5563;font-weight:700">{{ cash_pct }}%</span> Cash — ${{ '%.0f'|format(cash_v) }}</div>
       </div>
     </div>
     <div class="ss" style="{{ 'color:#F87171' if not alloc_ok else 'color:#34D399' }}">
-      {{ '⚠️ Off 80/20 target' if not alloc_ok else '✓ On target 80/20' }}
+      {{ '⚠️ Off 80/20' if not alloc_ok else '✓ 80/20 on target' }}
     </div>
   </div>
-  <div class="scard">
-    <div class="sl">Cash</div>
-    <div class="sv">${{ '%.2f'|format(s.get('cash',0)) }}</div>
-    <div class="ss">{{ '%.1f'|format(s.get('cash',0) / s.get('initial_capital',2000) * 100) }}% of capital</div>
-  </div>
+
 </div>
 <script>
 (function(){
   const c=document.getElementById('allocPie');
   if(!c)return;
   const ctx=c.getContext('2d');
-  const base={{ base_pct }}, alpha={{ alpha_pct }}, cash=Math.max(0,100-base-alpha);
-  const slices=[{v:base,c:'#38BDF8'},{v:alpha,c:'#A78BFA'},{v:cash,c:'#374151'}];
+  const slices=[
+    {v:{{ base_pct }},c:'#38BDF8'},
+    {v:{{ alpha_pct }},c:'#A78BFA'},
+    {v:{{ cash_pct }},c:'#374151'}
+  ];
   let start=-Math.PI/2;
   slices.forEach(s=>{
+    if(s.v<=0)return;
     const angle=s.v/100*2*Math.PI;
-    ctx.beginPath(); ctx.moveTo(22,22);
-    ctx.arc(22,22,20,start,start+angle);
+    ctx.beginPath(); ctx.moveTo(24,24);
+    ctx.arc(24,24,22,start,start+angle);
     ctx.closePath(); ctx.fillStyle=s.c; ctx.fill();
     start+=angle;
   });
-  ctx.beginPath(); ctx.arc(22,22,10,0,2*Math.PI);
+  ctx.beginPath(); ctx.arc(24,24,11,0,2*Math.PI);
   ctx.fillStyle='#111827'; ctx.fill();
 })();
 </script>
