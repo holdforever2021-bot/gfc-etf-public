@@ -751,6 +751,23 @@ footer a{color:#a78bfa;text-decoration:none}
 
 {% set hist = s.get('performance_history', []) %}
 {% set last = hist[-1] if hist else {} %}
+{# ── SYSTEM ALERT BANNER ── #}
+{% set alerts = s.get('system_alerts', []) %}
+{% if alerts %}
+<div style="margin-bottom:14px;padding:12px 16px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);border-radius:12px;display:flex;align-items:flex-start;gap:10px">
+  <span style="font-size:18px;line-height:1">🚨</span>
+  <div>
+    <div style="font-size:12px;font-weight:700;color:#F87171;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">System Alert</div>
+    {% for a in alerts %}
+    <div style="font-size:12px;color:#FCA5A5;line-height:1.5">{{ a.ts }} — {{ a.msg }}</div>
+    {% endfor %}
+  </div>
+</div>
+{% elif s.get('system_ready') %}
+<div style="margin-bottom:14px;padding:8px 14px;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2);border-radius:10px;font-size:11px;color:#34D399">
+  ✅ All systems checked {{ s.system_ready }} ET — ready
+</div>
+{% endif %}
 <!-- NAV STATS -->
 <div class="grid5">
   <div class="scard">
