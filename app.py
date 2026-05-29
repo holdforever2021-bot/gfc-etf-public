@@ -846,26 +846,25 @@ footer a{color:#a78bfa;text-decoration:none}
     <div style="margin-top:6px;display:flex;flex-direction:column;gap:2px">
       {% if base_moved %}
       <div class="ss">Base: <strong style="color:{{ '#34D399' if day_base_ret>=0 else '#F87171' }}">{{ '%+.2f'|format(day_base_ret) }}% / ${{ '%+.0f'|format(day_base_pnl) }}</strong></div>
-      <div class="ss">Alpha: <strong style="color:{{ '#a78bfa' if day_alpha_pnl>=0 else '#F87171' }}">${{ '%+.0f'|format(day_alpha_pnl) }}</strong></div>
+      {%- set prev_alpha_mtm = alpha_val.v - day_alpha_pnl %}
+      {%- set day_alpha_pct = (day_alpha_pnl / prev_alpha_mtm * 100) if prev_alpha_mtm != 0 else 0 %}
+      <div class="ss">Alpha: <strong style="color:{{ '#a78bfa' if day_alpha_pnl>=0 else '#F87171' }}">{{ '%+.1f'|format(day_alpha_pct) }}% / ${{ '%+.0f'|format(day_alpha_pnl) }}</strong></div>
       {% else %}
       <div class="ss" style="color:#4B5563">Split unavailable on trade days</div>
       {% endif %}
     </div>
   </div>
 
-  {# 5. ALLOCATION PIE — Base / Alpha / Cash (no separate cash card) #}
-  <div class="scard" style="{{ 'border-color:rgba(239,68,68,.4)' if not alloc_ok else '' }}">
+  {# 5. ALLOCATION PIE — Base / Alpha / Cash #}
+  <div class="scard">
     <div class="sl">Allocation</div>
-    <div style="display:flex;align-items:center;gap:10px;margin:4px 0 6px">
+    <div style="display:flex;align-items:center;gap:10px;margin:4px 0 4px">
       <canvas id="allocPie" width="48" height="48"></canvas>
       <div style="display:flex;flex-direction:column;gap:2px">
         <div class="ss"><span style="color:#38BDF8;font-weight:700">{{ base_pct }}%</span> Base</div>
         <div class="ss"><span style="color:#a78bfa;font-weight:700">{{ alpha_pct }}%</span> Alpha</div>
-        <div class="ss"><span style="color:#4B5563;font-weight:700">{{ cash_pct }}%</span> Cash — ${{ '%.0f'|format(cash_v) }}</div>
+        <div class="ss"><span style="color:#4B5563;font-weight:700">{{ cash_pct }}%</span> Cash ${{ '%.0f'|format(cash_v) }}</div>
       </div>
-    </div>
-    <div class="ss" style="{{ 'color:#F87171' if not alloc_ok else 'color:#34D399' }}">
-      {{ '⚠️ Off 80/20' if not alloc_ok else '✓ 80/20 on target' }}
     </div>
   </div>
 
