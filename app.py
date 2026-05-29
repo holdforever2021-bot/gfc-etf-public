@@ -7,6 +7,19 @@ import requests as req_lib, json, os
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'gfc-etf-2026-frontier')
+
+import re as _re
+@app.template_filter('strip_prices')
+def strip_prices(text):
+    """Remove dollar price references from external research text."""
+    if not text: return text
+    # Remove patterns like $45.52, $130.79, $27.7B, +$0.69 etc.
+    text = _re.sub(r'\+?\$\d+[\d,]*(?:\.\d+)?[BMKbmk]?', '', text)
+    # Remove percentage price targets like +73%, -3.9%
+    text = _re.sub(r'[+\-]\d+\.?\d*%', '', text)
+    # Clean up double spaces
+    text = _re.sub(r'  +', ' ', text).strip(' ,;·')
+    return text
 PIN = os.environ.get('ETF_PIN', '2026')
 DATA_URL = 'https://jarvis.ankurjoshi-demo.com/etf-data'
 AGENT_API_KEY = os.environ.get('AGENT_API_KEY', '')  # for agent-to-agent calls
@@ -718,7 +731,7 @@ footer a{color:#a78bfa;text-decoration:none}
   </div>
   {% if ba %}
   <div style="font-size:10px;color:#4B5563;margin-bottom:8px;padding:4px 10px;background:rgba(75,85,99,.1);border-radius:6px;display:inline-block">⚠️ Research context only — prices from external source, verify before acting</div>
-  {% if ba.sentiment_reason %}<div class="brief-thesis">{{ ba.sentiment_reason }}</div>{% endif %}
+  {% if ba.sentiment_reason %}<div class="brief-thesis">{{ ba.sentiment_reason | strip_prices }}</div>{% endif %}
   <div class="brief-grid">
     {% if ba.top_opportunities %}
     <div class="brief-section">
@@ -727,7 +740,7 @@ footer a{color:#a78bfa;text-decoration:none}
       <div class="brief-item">
         <span class="brief-ticker">{{ opp.ticker }}</span>
         <span class="brief-action act-buy">{{ opp.action | replace('BUY/ADD','ADD') | replace('BUY','ADD') }}</span>
-        <span class="brief-note">{{ opp.reason }}</span>
+        <span class="brief-note">{{ opp.reason | strip_prices }}</span>
       </div>
       {% endfor %}
     </div>
@@ -738,14 +751,14 @@ footer a{color:#a78bfa;text-decoration:none}
       {% for risk in ba.key_risks %}
       <div class="brief-item">
         <span class="brief-ticker">{{ risk.ticker }}</span>
-        <span class="brief-note">{{ risk.risk }}</span>
+        <span class="brief-note">{{ risk.risk | strip_prices }}</span>
       </div>
       {% endfor %}
     </div>
     {% endif %}
   </div>
   {% if ba.alpha_watch %}
-  <div class="brief-alpha">🔬 Amatya Alpha Watch: {{ ba.alpha_watch }}</div>
+  <div class="brief-alpha">🔬 Amatya Alpha Watch: {{ ba.alpha_watch | strip_prices }}</div>
   {% endif %}
   {% endif %}
 </div>
