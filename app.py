@@ -690,16 +690,17 @@ footer a{color:#a78bfa;text-decoration:none}
     </div>
     {% endif %}
   </div>
-  {% if bd.action_items %}
-  <div class="brief-section" style="margin-top:12px">
-    <div class="brief-section-title">⚡ Action Items</div>
-    {% for item in bd.action_items %}
+  {% if bd.alpha_watch %}
+  <div class="brief-alpha">🔬 Alpha Watch: {{ bd.alpha_watch }}</div>
+  {% endif %}
+  {% set recs = bd.get('recommendations', bd.get('action_items', [])) %}
+  {% if recs %}
+  <div class="brief-section" style="margin-top:10px">
+    <div class="brief-section-title">💡 Recommendations</div>
+    {% for item in recs %}
     <div class="brief-action-item">{{ loop.index }}. {{ item }}</div>
     {% endfor %}
   </div>
-  {% endif %}
-  {% if bd.alpha_watch %}
-  <div class="brief-alpha">🔬 Alpha Watch: {{ bd.alpha_watch }}</div>
   {% endif %}
   {% else %}
   <div style="font-size:12px;color:#4B5563;margin-top:8px">{{ brief.analysis[:200] }}...</div>
@@ -784,11 +785,6 @@ footer a{color:#a78bfa;text-decoration:none}
     <div class="sv {{ 'pos' if perf.get('unrealized_pnl',0)>=0 else 'neg' }}">${{ '%+.2f'|format(perf.get('unrealized_pnl',0)) }}</div>
     <div class="ss">Realized: ${{ '%+.2f'|format(perf.get('realized_pnl',0)) }}</div>
   </div>
-  <div class="scard">
-    <div class="sl">Cash</div>
-    <div class="sv">${{ '%.2f'|format(s.get('cash',0)) }}</div>
-    <div class="ss">Alpha budget: ${{ '%.0f'|format(s.get('initial_capital',2000)*0.20) }}</div>
-  </div>
   <div class="scard" style="grid-column:span 1" id="todayCard">
     <div class="sl">Today</div>
     {%- set prev = hist[-2] if hist|length >= 2 else {} %}
@@ -799,7 +795,57 @@ footer a{color:#a78bfa;text-decoration:none}
     <div class="sv {{ 'pos' if day_ret>=0 else 'neg' }}">{{ '%+.2f'|format(day_ret) }}%</div>
     <div class="ss">${{ '%+.2f'|format(day_pnl) }} vs yesterday</div>
   </div>
+  {# ── ALLOCATION STAT — Base vs Alpha (target 80/20) ── #}
+  {%- set alpha_mtm = s.get('alpha_layer',{}).get('positions',[]) | map(attribute='mtm') | list %}
+  {%- set alpha_val = namespace(v=0) %}
+  {%- for ap in s.get('alpha_layer',{}).get('positions',[]) %}
+    {%- set alpha_val.v = alpha_val.v + (ap.mtm if ap.mtm else ap.cost) %}
+  {%- endfor %}
+  {%- set eq_mv = positions | map(attribute='market_value') | list %}
+  {%- set eq_val = namespace(v=0) %}
+  {%- for p in positions %}{%- set eq_val.v = eq_val.v + p.get('market_value',0) %}{%- endfor %}
+  {%- set nav_total = s.get('nav', 2000) %}
+  {%- set base_pct = ((eq_val.v / nav_total * 100) | round(1)) if nav_total else 0 %}
+  {%- set alpha_pct = ((alpha_val.v / nav_total * 100) | round(1)) if nav_total else 0 %}
+  {%- set alloc_ok = base_pct >= 72 and base_pct <= 88 %}
+  <div class="scard" style="{{ 'border-color:rgba(239,68,68,.4)' if not alloc_ok else '' }}">
+    <div class="sl">Allocation</div>
+    <div style="display:flex;align-items:center;gap:10px;margin:6px 0">
+      <canvas id="allocPie" width="44" height="44"></canvas>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#E2E8F0">{{ base_pct }}% Base</div>
+        <div style="font-size:12px;color:#a78bfa;font-weight:600">{{ alpha_pct }}% Alpha</div>
+      </div>
+    </div>
+    <div class="ss" style="{{ 'color:#F87171' if not alloc_ok else 'color:#34D399' }}">
+      {{ '⚠️ Off 80/20 target' if not alloc_ok else '✓ On target 80/20' }}
+    </div>
+  </div>
+  <div class="scard">
+    <div class="sl">Cash</div>
+    <div class="sv">${{ '%.2f'|format(s.get('cash',0)) }}</div>
+    <div class="ss">{{ '%.1f'|format(s.get('cash',0) / s.get('initial_capital',2000) * 100) }}% of capital</div>
+  </div>
 </div>
+<script>
+(function(){
+  const c=document.getElementById('allocPie');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  const base={{ base_pct }}, alpha={{ alpha_pct }}, cash=Math.max(0,100-base-alpha);
+  const slices=[{v:base,c:'#38BDF8'},{v:alpha,c:'#A78BFA'},{v:cash,c:'#374151'}];
+  let start=-Math.PI/2;
+  slices.forEach(s=>{
+    const angle=s.v/100*2*Math.PI;
+    ctx.beginPath(); ctx.moveTo(22,22);
+    ctx.arc(22,22,20,start,start+angle);
+    ctx.closePath(); ctx.fillStyle=s.c; ctx.fill();
+    start+=angle;
+  });
+  ctx.beginPath(); ctx.arc(22,22,10,0,2*Math.PI);
+  ctx.fillStyle='#111827'; ctx.fill();
+})();
+</script>
 
 <!-- LIVE PERFORMANCE CHART — dollar value, same style as backtest -->
 {% set last = hist[-1] if hist else {} %}
