@@ -821,10 +821,11 @@ footer a{color:#a78bfa;text-decoration:none}
     <div style="margin-top:6px;display:flex;flex-direction:column;gap:2px">
       <div class="ss">Base: <strong style="color:{{ '#34D399' if base_ret_pct>=0 else '#F87171' }}">{{ '%+.2f'|format(base_ret_pct) }}% / ${{ '%+.0f'|format(base_ret_d) }}</strong></div>
       <div class="ss">Alpha: <strong style="color:{{ '#a78bfa' if alpha_ret_pct>=0 else '#F87171' }}">{{ '%+.2f'|format(alpha_ret_pct) }}% / ${{ '%+.0f'|format(alpha_ret_d) }}</strong></div>
+      <div class="ss">Realized: <strong style="color:{{ '#34D399' if realized_pnl>=0 else '#F87171' }}">${{ '%+.0f'|format(realized_pnl) }}</strong></div>
     </div>
   </div>
 
-  {# 3. UNREALIZED P&L — Base + Alpha + Realized #}
+  {# 3. UNREALIZED P&L — Base + Alpha #}
   {%- set eq_unreal = eq_val.v - eq_cost.v %}
   {%- set alpha_unreal = alpha_val.v - alpha_val.cost %}
   {%- set total_unreal = eq_unreal + alpha_unreal %}
@@ -834,17 +835,21 @@ footer a{color:#a78bfa;text-decoration:none}
     <div style="margin-top:6px;display:flex;flex-direction:column;gap:2px">
       <div class="ss">Base: <strong style="color:{{ '#34D399' if eq_unreal>=0 else '#F87171' }}">${{ '%+.0f'|format(eq_unreal) }}</strong></div>
       <div class="ss">Alpha: <strong style="color:{{ '#a78bfa' if alpha_unreal>=0 else '#F87171' }}">${{ '%+.0f'|format(alpha_unreal) }}</strong></div>
-      <div class="ss">Realized: <strong style="color:{{ '#34D399' if realized_pnl>=0 else '#F87171' }}">${{ '%+.0f'|format(realized_pnl) }}</strong></div>
     </div>
   </div>
 
-  {# 4. TODAY — Base + Alpha split #}
+  {# 4. TODAY — split only reliable on non-trade days #}
+  {%- set base_moved = (day_base_pnl | abs) > 5 %}
   <div class="scard" id="todayCard">
     <div class="sl">Today</div>
     <div class="sv {{ 'pos' if day_total_ret>=0 else 'neg' }}">{{ '%+.2f'|format(day_total_ret) }}% <span style="font-size:14px">${{ '%+.0f'|format(day_total_pnl) }}</span></div>
     <div style="margin-top:6px;display:flex;flex-direction:column;gap:2px">
+      {% if base_moved %}
       <div class="ss">Base: <strong style="color:{{ '#34D399' if day_base_ret>=0 else '#F87171' }}">{{ '%+.2f'|format(day_base_ret) }}% / ${{ '%+.0f'|format(day_base_pnl) }}</strong></div>
       <div class="ss">Alpha: <strong style="color:{{ '#a78bfa' if day_alpha_pnl>=0 else '#F87171' }}">${{ '%+.0f'|format(day_alpha_pnl) }}</strong></div>
+      {% else %}
+      <div class="ss" style="color:#4B5563">Split unavailable on trade days</div>
+      {% endif %}
     </div>
   </div>
 
@@ -1004,13 +1009,15 @@ window.addEventListener('DOMContentLoaded',function(){
     <div class="card-title">Base ETF — Live Positions</div>
     <div class="card-sub">Amatya Research · Risk-Tier Weighted · No stop loss · 2-5yr thesis</div>
   </div>
+  {%- set total_eq_mv = eq_val.v if eq_val.v > 0 else 1 %}
   {% set ns=namespace(tc=0,tv=0,tp=0) %}
   <div class="table-scroll"><table class="pos-table">
-    <thead><tr><th>Ticker</th><th>Qty</th><th>Avg Cost</th><th>Current</th><th>Mkt Value</th><th>P&L</th><th>P&L %</th></tr></thead>
+    <thead><tr><th>Ticker</th><th>Qty</th><th>Avg Cost</th><th>Current</th><th>Mkt Value</th><th>Weight</th><th>P&L</th><th>P&L %</th></tr></thead>
     <tbody>
     {% for p in positions %}
     {% set cost=p.avg_cost*p.quantity %}
     {% set mval=p.get('market_value',p.current_price*p.quantity) %}
+    {% set wt = (mval / total_eq_mv * 100) | round(1) %}
     {% set ns.tc=ns.tc+cost %}{% set ns.tv=ns.tv+mval %}{% set ns.tp=ns.tp+p.get('unrealized_pnl',0) %}
     <tr>
       <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:{% if p.ticker in ('NOK','ASTS','IPX','USAR') %}#2563EB{% elif p.ticker in ('FLY','LUNR','RGTI') %}#059669{% else %}#7C3AED{% endif %};flex-shrink:0"></span><strong>{{p.ticker}}</strong></span></td>
@@ -1018,6 +1025,7 @@ window.addEventListener('DOMContentLoaded',function(){
       <td style="color:var(--mt)">${{'%.2f'|format(p.avg_cost)}}</td>
       <td>${{'%.2f'|format(p.current_price)}}</td>
       <td>${{'%.2f'|format(mval)}}</td>
+      <td style="color:var(--mt)">{{'%.1f'|format(wt)}}%</td>
       <td class="{{'pos' if p.get('unrealized_pnl',0)>=0 else 'neg'}}">${{'%+.2f'|format(p.get('unrealized_pnl',0))}}</td>
       <td class="{{'pos' if p.get('pnl_pct',0)>=0 else 'neg'}}">{{'%+.1f'|format(p.get('pnl_pct',0))}}%</td>
     </tr>
@@ -1025,6 +1033,7 @@ window.addEventListener('DOMContentLoaded',function(){
     <tr class="totals">
       <td>TOTAL</td><td>—</td><td style="color:var(--mt)">${{'%.2f'|format(ns.tc)}}</td><td>—</td>
       <td>${{'%.2f'|format(ns.tv)}}</td>
+      <td style="color:var(--mt)">100%</td>
       <td class="{{'pos' if ns.tp>=0 else 'neg'}}">${{'%+.2f'|format(ns.tp)}}</td>
       <td class="{{'pos' if ns.tp>=0 else 'neg'}}">{{'%+.2f'|format((ns.tp/ns.tc*100) if ns.tc else 0)}}%</td>
     </tr>
