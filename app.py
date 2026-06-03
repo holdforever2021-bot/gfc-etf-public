@@ -955,7 +955,7 @@ window.addEventListener('DOMContentLoaded',function(){
          borderColor:'#4B5563',backgroundColor:'transparent',borderWidth:1.5,pointRadius:hist.length<5?3:1,tension:0.4,fill:false,borderDash:[6,3]},
       ]},
       options:{
-        responsive:true,maintainAspectRatio:false,
+        responsive:false,
         interaction:{mode:'index',intersect:false},
         plugins:{legend:{display:false},
           tooltip:{backgroundColor:'#1F2937',borderColor:'#374151',borderWidth:1,padding:12,
@@ -982,7 +982,7 @@ window.addEventListener('DOMContentLoaded',function(){
     data:{labels:['P1 · Sovereign','P2 · Space','P3 · Physical AI'],
       datasets:[{data:pillarVals.map(v=>Math.round(v)),
         backgroundColor:['#2563EB','#059669','#7C3AED'],borderColor:'#0F172A',borderWidth:3,hoverOffset:6}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#9CA3AF',font:{size:11},padding:14,usePointStyle:true}}}}
+    options:{responsive:false,plugins:{legend:{position:'bottom',labels:{color:'#9CA3AF',font:{size:11},padding:14,usePointStyle:true}}}}
   });
 
   // Tier bar — actual values
@@ -995,7 +995,7 @@ window.addEventListener('DOMContentLoaded',function(){
       datasets:[{data:[Math.round(tierVals.anchor),Math.round(tierVals.growth),Math.round(tierVals.speculative)],
         backgroundColor:['rgba(124,58,237,.7)','rgba(16,185,129,.7)','rgba(245,158,11,.7)'],
         borderColor:['#7C3AED','#10B981','#F59E0B'],borderWidth:2,borderRadius:6}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+    options:{responsive:false,plugins:{legend:{display:false},
       tooltip:{callbacks:{label:c=>'$'+c.parsed.y.toLocaleString('en',{maximumFractionDigits:0})}}},
       scales:{x:{grid:{display:false},ticks:{color:'#9CA3AF',font:{size:11}}},
         y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4B5563',font:{size:11},callback:v=>'$'+v.toLocaleString('en',{maximumFractionDigits:0})}}}}
