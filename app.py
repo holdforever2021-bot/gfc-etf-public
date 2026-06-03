@@ -365,7 +365,7 @@ window.addEventListener('DOMContentLoaded', function() {
   </div>
 
   <div class="why-grid" style="margin-top:60px">
-    <div class="why"><div class="why-icon">🤖</div><h3>AI-Managed Alpha Layer</h3><p>20% of capital is actively managed by an AI agent — no emotions, no hesitation. The agent analyzes options chains, identifies catalysts, and executes spread strategies to beat the base portfolio.</p></div>
+    <div class="why"><div class="why-icon">🤖</div><h3>AI-Managed Alpha Layer</h3><p>20% of capital is actively managed by an AI agent. Alpha trades must be uncorrelated to the base portfolio — deployed in 3x ETFs, macro instruments (QQQ, VIX, sector ETFs), and opportunity-based plays. No options on names already held in the base book.</p></div>
     <div class="why"><div class="why-icon">🎯</div><h3>Thesis-Driven, Not Stop-Loss Driven</h3><p>No stop losses on base positions. Each holding is a 2-5 year structural thesis. The ETF holds through volatility because the underlying trends are decade-long structural forces, not momentum plays.</p></div>
     <div class="why"><div class="why-icon">📊</div><h3>Monthly Research Updates</h3><p>The portfolio rebalances monthly based on updated Amatya Research conviction reports. If a name's thesis weakens, the agent recommends substitution to the portfolio manager for approval.</p></div>
     <div class="why"><div class="why-icon">🔒</div><h3>Transparent & Secure</h3><p>All positions, transactions, and agent decisions are logged and visible in real time. The AI agent can trade freely but cannot transfer funds — enforced at the API layer.</p></div>
@@ -373,9 +373,10 @@ window.addEventListener('DOMContentLoaded', function() {
 
   <div class="alpha-box">
     <h3>The Alpha Layer</h3>
-    <p>Most ETFs are passive. American Frontier has an active AI agent managing a 20% risk layer — deploying options spreads, hedges, and tactical bets tied to near-term catalysts while the base portfolio compounds over years.</p>
+    <p>Most ETFs are passive. American Frontier has an active AI agent managing a 20% risk layer — deploying uncorrelated, opportunistic positions to amplify ETF returns while the base portfolio compounds over years.</p>
     <div class="af-tags">
-      <span class="aft">Bull call spreads</span>
+      <span class="aft">3x Leveraged ETFs</span>
+      <span class="aft">Macro instruments</span>
       <span class="aft">Catalyst-driven entries</span>
       <span class="aft">Vol arbitrage</span>
       <span class="aft">Downside hedging</span>
